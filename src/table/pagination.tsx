@@ -34,7 +34,7 @@ const PageNumber: React.FC<{
   return (
     <li
       className={clsx({
-        'transition group rounded': true,
+        'transition group cursor-pointer rounded': true,
         'bg-transparent': !selected,
         'hover:bg-blue-500': !disable,
         'opacity-50': disable,
