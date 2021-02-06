@@ -92,7 +92,7 @@ export const PaginationUI: React.FC<{ data: Pagination<unknown> | null }> = ({ d
 
   return (
     <PaginationStyle>
-      <PageNumber page={1} special="first" disable={currentPage === 1} />
+      <PageNumber page={1} special="first" disable={currentPage === 1}/>
       <PageNumber page={currentPage - 1} special="prev" disable={currentPage === 1} />
       {nums.map((idx) => (
         <PageNumber page={idx} key={`page_${idx}`} selected={currentPage === idx} />
