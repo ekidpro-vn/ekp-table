@@ -18,8 +18,8 @@ jobs:
           npm install -g rollup
           npm run build
       - run: npm publish --access public
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_PUBLISH_TOKEN }}
       - run: |
           npm run build-storybook
           npm run deploy-storybook
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_PUBLISH_TOKEN }}
