@@ -12,7 +12,7 @@
     "build-storybook": "build-storybook",
     "build": "rollup -c",
     "predeploy": "npm run build-storybook",
-    "deploy-storybook": "gh-pages -d storybook-static"
+    "deploy-storybook": "storybook-to-ghpages"
   },
   "author": "Luong Van Lam - lamlv <lamlv@egroup.vn>",
   "license": "ISC",
@@ -29,6 +29,7 @@
     "@storybook/addons": "^6.1.17",
     "@storybook/preset-create-react-app": "^3.1.5",
     "@storybook/react": "^6.1.17",
+    "@storybook/storybook-deployer": "^2.8.7",
     "@testing-library/jest-dom": "^5.11.9",
     "@testing-library/react": "^11.2.5",
     "@types/jest": "^26.0.20",
