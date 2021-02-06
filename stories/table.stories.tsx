@@ -2,6 +2,7 @@ import React from 'react';
 import { Story, Meta } from '@storybook/react/types-6-0';
 import 'tailwindcss/tailwind.css';
 
+
 import { Table, TableProps, Loader, StructureProps, Pagination } from '../src';
 
 export default {
