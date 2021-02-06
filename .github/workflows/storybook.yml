@@ -17,4 +17,8 @@ jobs:
           npm install
           npm install -g rollup
           npm run build-storybook
-          npm run deploy-storybook -- --ci
+
+      - run: npm run deploy-storybook -- --ci
+        env:
+          GH_TOKEN: ${{ github.actor }}:${{ secrets.DEPLOY_STORYBOOOK }}
+
