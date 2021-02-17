@@ -58,7 +58,7 @@ const RenderBody: React.FC<{
 
 const MemoizedHeader = React.memo(RenderHeader);
 const MemoizedBody = React.memo(RenderBody);
-const scrollOnMobile = { overflow: 'scroll' };
+const scrollOnMobile: React.CSSProperties = {overflowX: 'scroll'}
 
 export const Table: React.FC<TableProps> = (props) => {
   const { structure, prefix } = props;
@@ -126,7 +126,7 @@ export const Table: React.FC<TableProps> = (props) => {
           <MemoizedBody data={data?.data} structure={structure} loader={loader.current} />
         </tbody>
       </table>
-      <div className="mt-8 float-right">
+      <div className="mt-8 mb-5">
         <PaginationUI data={data} />
       </div>
     </div>

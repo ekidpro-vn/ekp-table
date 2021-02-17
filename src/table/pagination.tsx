@@ -1,7 +1,17 @@
 import clsx from 'clsx';
 import React from 'react';
-import { Pagination } from './loader';
+import { Pagination, DataPagination } from './loader';
 import { PaginationStyle } from './pagination.style';
+import {useState} from 'react';
+
+const dataPerpage = [
+  { value: 5, label: '5' },
+  { value: 10, label: '10' },
+  { value: 20, label: '20' },
+  { value: 50, label: '50' },
+  { value: 100, label: '100' },
+]
+
 
 const renderText = (selected?: boolean, special?: 'first' | 'prev' | 'next' | 'last') => {
   switch (special) {
@@ -61,7 +71,50 @@ const PageNumber: React.FC<{
       </div>
     </li>
   );
-};
+  };
+
+const PerpageDropdown: React.FC<{ pagination: DataPagination, dataPerpage: { value: number; label: string}[] }> = (props) => {
+  const { currentPage, totalItems, totalPages, perPage } = props.pagination;
+
+  const [perpageCurrent, setPerpageCurrent] = useState<string>('10')
+  const [showSelectPerpage, setShowSelectPerpage] = useState<boolean>(false)
+
+  const onSelectedPerpage = (item: { value: number; label: string;}) => {
+    setPerpageCurrent(item.label)
+    setShowSelectPerpage(false)
+  }
+
+  const start = (currentPage - 1) * perPage + 1
+  const end = currentPage * perPage
+
+  return (
+    <div className="flex items-center ml-3">
+      <div className={`${showSelectPerpage ? 'bg-blue-500' : 'bg-gray-200'} ekp-pagination-dropdown relative cursor-pointer rounded flex items-center px-4 h-9 hover:bg-blue-500 duration-300`} onClick={() => setShowSelectPerpage(!showSelectPerpage)}>
+        <span className={`${showSelectPerpage ? 'text-white' : 'text-gray-500'} ekp-pagination-dropdown-label mr-3`}>{perpageCurrent}</span>
+        <i className={`fas fa-chevron-down text-sm ${showSelectPerpage ? 'text-white' : 'text-gray-500'}`}></i>
+        {showSelectPerpage && 
+          <>
+            <div className="absolute -top-40 left-0 bg-white shadow-lg w-full z-20">
+            {dataPerpage && dataPerpage.length > 0 &&
+              dataPerpage.map(item => {
+                return (
+                  <div key={JSON.stringify(item.value)} className={`${perpageCurrent === item.label ? 'bg-gray-100' : ''} py-1 px-4 hover:bg-gray-100`} onClick={() => onSelectedPerpage(item)}>
+                    <span>{item.label}</span>
+                  </div>
+                )
+              })}
+            </div>
+          </>
+        }
+      </div>
+      <div className="ml-3">
+        <span>{`Showing ${start} - ${end} of ${totalItems}`}</span>
+      </div>
+      
+      {/* {showSelectPerpage && <div className="w-screen h-screen z-10 opacity-0" onClick={() => setShowSelectPerpage(!showSelectPerpage)}></div>} */}
+    </div>
+  )
+}
 
 export const PaginationUI: React.FC<{ data: Pagination<unknown> | null }> = ({ data }) => {
   if (data === null) {
@@ -69,7 +122,10 @@ export const PaginationUI: React.FC<{ data: Pagination<unknown> | null }> = ({ d
   }
 
   const { pagination } = data;
-  const { currentPage, totalItems, totalPages } = pagination;
+  const { currentPage, totalPages } = pagination;
+
+  console.log('pagination', pagination);
+  
 
   const nums: number[] = [];
   for (let idx = currentPage - 2; idx < currentPage; idx += 1) {
@@ -92,13 +148,19 @@ export const PaginationUI: React.FC<{ data: Pagination<unknown> | null }> = ({ d
 
   return (
     <PaginationStyle>
-      <PageNumber page={1} special="first" disable={currentPage === 1}/>
-      <PageNumber page={currentPage - 1} special="prev" disable={currentPage === 1} />
-      {nums.map((idx) => (
-        <PageNumber page={idx} key={`page_${idx}`} selected={currentPage === idx} />
-      ))}
-      <PageNumber page={currentPage + 1} special="next" disable={currentPage >= totalPages} />
-      <PageNumber page={totalPages} special="last" disable={currentPage >= totalPages} />
+      <div>
+        <PerpageDropdown pagination={pagination} dataPerpage={dataPerpage}/>
+      </div>
+      
+      <div>
+        <PageNumber page={1} special="first" disable={currentPage === 1}/>
+        <PageNumber page={currentPage - 1} special="prev" disable={currentPage === 1} />
+        {nums.map((idx) => (
+          <PageNumber page={idx} key={`page_${idx}`} selected={currentPage === idx} />
+        ))}
+        <PageNumber page={currentPage + 1} special="next" disable={currentPage >= totalPages} />
+        <PageNumber page={totalPages} special="last" disable={currentPage >= totalPages} />
+      </div>
     </PaginationStyle>
   );
 };

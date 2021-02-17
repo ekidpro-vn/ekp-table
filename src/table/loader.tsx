@@ -10,6 +10,13 @@ export interface Pagination<T> {
   };
 }
 
+export interface DataPagination {
+  currentPage: number;
+  perPage: number;
+  totalItems: number;
+  totalPages: number;
+}
+
 export interface FetchProps<Filter> {
   url: string;
   page: number;

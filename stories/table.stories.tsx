@@ -37,15 +37,65 @@ const defaultLoader: Loader<DefaultDataType, { keyword: string }> = {
           fullname: '2',
           mobile: '2',
         },
+        {
+          uid: 3,
+          fullname: '3',
+          mobile: '3',
+        },
+        {
+          uid: 4,
+          fullname: '4',
+          mobile: '4',
+        },
+        {
+          uid: 5,
+          fullname: '5',
+          mobile: '5',
+        },
+        {
+          uid: 6,
+          fullname: '6',
+          mobile: '6',
+        },
+        {
+          uid: 7,
+          fullname: '7',
+          mobile: '7',
+        },
+        {
+          uid: 8,
+          fullname: '8',
+          mobile: '8',
+        },
+        {
+          uid: 9,
+          fullname: '9',
+          mobile: '9',
+        },
+        {
+          uid: 10,
+          fullname: '10',
+          mobile: '10',
+        },
+        {
+          uid: 11,
+          fullname: '11',
+          mobile: '11',
+        },
+        {
+          uid: 12,
+          fullname: '12',
+          mobile: '12',
+        },
       ];
 
       const result: Pagination<DefaultDataType> = {
         data: items,
         pagination: {
-          currentPage: input.page,
-          perPage: input.size,
-          totalItems: 2,
-          totalPages: 1,
+          currentPage: 1,//input.page,
+          perPage: 4, // input.size,
+          totalItems: 12,
+          totalPages: 3,
         },
       };
 
