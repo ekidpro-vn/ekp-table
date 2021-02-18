@@ -178,8 +178,6 @@ export const useFilter = (prefix: string): ((params: Record<string,string|undefi
         search: queryString.stringify(parsed),
       });
 
-      console.log('search', history);
-      
     },
     [history, prefix]
   );
