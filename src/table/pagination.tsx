@@ -95,14 +95,9 @@ const PerpageDropdown: React.FC<{ pagination: DataPagination, dataPerpage: { val
   const start = (currentPage - 1) * perPage + 1
   const end = currentPage * perPage > totalItems ? totalItems : currentPage * perPage
 
-  const test = (e: React.FocusEvent<HTMLDivElement>) => {
-    console.log('ducnh', e);
-    
-  }
-
   return (
     <div className="flex items-center ml-3">
-      <div className={`${showSelectPerpage ? 'bg-blue-500' : 'bg-gray-200'} ekp-pagination-dropdown relative cursor-pointer rounded flex items-center px-4 h-9 hover:bg-blue-500 duration-300`} onBlur={test} onClick={() => setShowSelectPerpage(!showSelectPerpage)}>
+      <div className={`${showSelectPerpage ? 'bg-blue-500' : 'bg-gray-200'} ekp-pagination-dropdown relative cursor-pointer rounded flex items-center px-4 h-9 hover:bg-blue-500 duration-300`} onClick={() => setShowSelectPerpage(!showSelectPerpage)}>
         <span className={`${showSelectPerpage ? 'text-white' : 'text-gray-500'} ekp-pagination-dropdown-label mr-3`}>{perpageCurrent}</span>
         <i className={`fas fa-chevron-down text-sm ${showSelectPerpage ? 'text-white' : 'text-gray-500'}`}></i>
         {showSelectPerpage && 
