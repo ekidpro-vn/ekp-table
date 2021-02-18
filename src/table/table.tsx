@@ -170,7 +170,7 @@ export const useFilter = (prefix: string): ((params: Record<string,string|undefi
       const parsed = queryString.parse(window.location.search);
 
       for (const [key, value] of Object.entries(params)) {
-        parsed[`${key}`] = value || null
+        parsed[`${prefix}_${key}`] = value || null
       }
 
       history.push({
