@@ -93,9 +93,9 @@ const defaultLoader: Loader<DefaultDataType, { keyword: string }> = {
         data: items,
         pagination: {
           currentPage: 1,//input.page,
-          perPage: 4, // input.size,
+          perPage: 10, // input.size,
           totalItems: 12,
-          totalPages: 3,
+          totalPages: 2,
         },
       };
 
