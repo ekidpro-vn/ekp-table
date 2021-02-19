@@ -6,6 +6,10 @@ export const PaginationStyle = styled.ul`
   align-items: center;
   justify-content: space-between;
 
+  @media (max-width: 639px){
+    display: block;
+  }
+
   li {
     display: inline-block;
     margin-right: 4px;

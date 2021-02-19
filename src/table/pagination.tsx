@@ -77,7 +77,7 @@ const PageNumber: React.FC<{
   };
 
 const PerpageDropdown: React.FC<{ pagination: DataPagination, dataPerpage: { value: number; label: string}[], prefix: string }> = (props) => {
-  const { currentPage, totalItems, totalPages, perPage } = props.pagination;
+  const { currentPage, totalItems, perPage } = props.pagination;
   const setFilter = useFilter(props.prefix);
 
   const [perpageCurrent, setPerpageCurrent] = useState<string>('10')
@@ -96,8 +96,8 @@ const PerpageDropdown: React.FC<{ pagination: DataPagination, dataPerpage: { val
   const end = currentPage * perPage > totalItems ? totalItems : currentPage * perPage
 
   return (
-    <div className="flex items-center ml-3">
-      <div className={`${showSelectPerpage ? 'bg-blue-500' : 'bg-gray-200'} ekp-pagination-dropdown relative cursor-pointer rounded flex items-center px-4 h-9 hover:bg-blue-500 duration-300`} onClick={() => setShowSelectPerpage(!showSelectPerpage)}>
+    <div className="flex items-center ml-3 justify-center mb-5 sm:mb-0">
+      <div className={`${showSelectPerpage ? 'bg-blue-500' : 'bg-gray-200'} ekp-pagination-dropdown relative cursor-pointer rounded inline-flex sm:flex items-center px-4 h-9 hover:bg-blue-500 duration-300`} onClick={() => setShowSelectPerpage(!showSelectPerpage)}>
         <span className={`${showSelectPerpage ? 'text-white' : 'text-gray-500'} ekp-pagination-dropdown-label mr-3`}>{perpageCurrent}</span>
         <i className={`fas fa-chevron-down text-sm ${showSelectPerpage ? 'text-white' : 'text-gray-500'}`}></i>
         {showSelectPerpage && 
@@ -162,18 +162,18 @@ export const PaginationUI: React.FC<{ data: Pagination<unknown> | null, prefix: 
   
   return (
     <PaginationStyle>
-      <div>
+      <div className="w-full sm:w-auto">
         <PerpageDropdown pagination={pagination} dataPerpage={dataPerpage} prefix={prefix}/>
       </div>
       
-      <div>
+      <div className="w-full sm:w-auto flex justify-center">
         <PageNumber page={1} special="first" disable={currentPage === 1} onClick={() => onSelectPage(1, currentPage === 1)}/>
         <PageNumber page={currentPage - 1} special="prev" disable={currentPage === 1} onClick={() => onSelectPage(currentPage - 1, currentPage === 1)}/>
         {nums.map((idx) => (
           <PageNumber page={idx} key={`page_${idx}`} selected={currentPage === idx} onClick={() => onSelectPage(idx, false)}/>
         ))}
         <PageNumber page={currentPage + 1} special="next" disable={currentPage >= totalPages} onClick={() => onSelectPage(currentPage + 1, currentPage >= totalPages)}/>
-        <PageNumber page={totalPages} special="last" disable={currentPage >= totalPages} onClick={() => onSelectPage(totalPages, currentPage >= totalPages)}/>
+        <PageNumber page={totalPages} special="last" disable={currentPage >= totalPages} onClick={() => onSelectPage(totalPages, currentPage >= totalPages)} />
       </div>
     </PaginationStyle>
   );
