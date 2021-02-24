@@ -1,9 +1,7 @@
+import { Meta, Story } from '@storybook/react/types-6-0';
 import React from 'react';
-import { Story, Meta } from '@storybook/react/types-6-0';
 import 'tailwindcss/tailwind.css';
-
-
-import { Table, TableProps, Loader, StructureProps, Pagination } from '../src';
+import { Loader, Pagination, StructureProps, Table, TableProps } from '../src';
 
 export default {
   title: 'Example/Table',
@@ -77,24 +75,14 @@ const defaultLoader: Loader<DefaultDataType, { keyword: string }> = {
           fullname: '10',
           mobile: '10',
         },
-        {
-          uid: 11,
-          fullname: '11',
-          mobile: '11',
-        },
-        {
-          uid: 12,
-          fullname: '12',
-          mobile: '12',
-        },
       ];
 
       const result: Pagination<DefaultDataType> = {
         data: items,
         pagination: {
-          currentPage: 1,//input.page,
-          perPage: 10, // input.size,
-          totalItems: 12,
+          currentPage: 1, // input.page,
+          perPage: 5, // input.size,
+          totalItems: 10,
           totalPages: 2,
         },
       };

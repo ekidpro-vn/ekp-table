@@ -1,5 +1,5 @@
 import clsx from 'clsx';
-import React, { useEffect, useRef, useState } from 'react';
+import React, { RefObject, useEffect, useRef, useState } from 'react';
 import { DataPagination, Pagination } from './loader';
 import { PaginationStyle } from './pagination.style';
 import { useFilter } from './table';
@@ -82,15 +82,23 @@ const PerpageDropdown: React.FC<{
 }> = (props) => {
   const { currentPage, totalItems, perPage } = props.pagination;
   const setFilter = useFilter(props.prefix);
-
-  const perpageDropdownRef = useRef(null);
-
-  useEffect(() => {
-    // perpageDropdownRef.current.activeElement.blur();
-  }, [perpageDropdownRef]);
-
   const [perpageCurrent, setPerpageCurrent] = useState<string>('10');
   const [showSelectPerpage, setShowSelectPerpage] = useState<boolean>(false);
+  const perpageDropdownRef = useRef<HTMLDivElement>(null);
+
+  const useOutsideElement = (ref: RefObject<HTMLDivElement>) => {
+    useEffect(() => {
+      const onClickOutside = (event) => {
+        if (ref.current && !ref.current.contains(event.target)) {
+          setShowSelectPerpage(false);
+        }
+      };
+      document.addEventListener('mousedown', onClickOutside);
+      return () => {
+        document.removeEventListener('mousedown', onClickOutside);
+      };
+    }, [ref]);
+  };
 
   const onSelectedPerpage = (item: { value: number; label: string }) => {
     setPerpageCurrent(item.label);
@@ -103,6 +111,8 @@ const PerpageDropdown: React.FC<{
 
   const start = (currentPage - 1) * perPage + 1;
   const end = currentPage * perPage > totalItems ? totalItems : currentPage * perPage;
+
+  useOutsideElement(perpageDropdownRef);
 
   return (
     <div className="flex items-center ml-3 justify-center mb-5 sm:mb-0">

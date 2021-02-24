@@ -2,6 +2,7 @@ import queryString from 'query-string';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { Code } from 'react-content-loader';
 import { useHistory, useLocation } from 'react-router-dom';
+import ImageNoData from '../assets/no-data.png';
 import { ErrorPage } from './error';
 import { Loader, Pagination } from './loader';
 import { PaginationUI } from './pagination';
@@ -34,7 +35,11 @@ const RenderBody: React.FC<{
   loader: Loader<any, Record<string, unknown>>;
 }> = ({ data, structure, loader }) => {
   if (!data || !Array.isArray(data) || data.length === 0) {
-    return <></>;
+    return (
+      <td colSpan={structure.length} className="bg-white w-full">
+        <img src={ImageNoData} alt="no data" className="block w-80 mx-auto" />
+      </td>
+    );
   }
 
   return (
