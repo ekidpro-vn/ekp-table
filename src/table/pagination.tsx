@@ -1,9 +1,8 @@
 import clsx from 'clsx';
-import React from 'react';
-import { Pagination, DataPagination } from './loader';
+import React, { useEffect, useRef, useState } from 'react';
+import { DataPagination, Pagination } from './loader';
 import { PaginationStyle } from './pagination.style';
-import { useState } from 'react';
-import {useFilter} from './table'
+import { useFilter } from './table';
 
 const dataPerpage = [
   { value: 5, label: '5' },
@@ -11,7 +10,7 @@ const dataPerpage = [
   { value: 20, label: '20' },
   { value: 50, label: '50' },
   { value: 100, label: '100' },
-]
+];
 
 const renderText = (selected?: boolean, special?: 'first' | 'prev' | 'next' | 'last') => {
   switch (special) {
@@ -37,7 +36,7 @@ const PageNumber: React.FC<{
   selected?: boolean;
   disable?: boolean;
   special?: 'first' | 'prev' | 'next' | 'last';
-  onClick?: (e: React.MouseEvent<HTMLLIElement, MouseEvent>) => void
+  onClick?: (e: React.MouseEvent<HTMLLIElement, MouseEvent>) => void;
 }> = (props) => {
   const { page, selected, special, disable, onClick } = props;
   const faName = renderText(selected, special);
@@ -74,62 +73,86 @@ const PageNumber: React.FC<{
       </div>
     </li>
   );
-  };
+};
 
-const PerpageDropdown: React.FC<{ pagination: DataPagination, dataPerpage: { value: number; label: string}[], prefix: string }> = (props) => {
+const PerpageDropdown: React.FC<{
+  pagination: DataPagination;
+  dataPerpage: { value: number; label: string }[];
+  prefix: string;
+}> = (props) => {
   const { currentPage, totalItems, perPage } = props.pagination;
   const setFilter = useFilter(props.prefix);
 
-  const [perpageCurrent, setPerpageCurrent] = useState<string>('10')
-  const [showSelectPerpage, setShowSelectPerpage] = useState<boolean>(false)
+  const perpageDropdownRef = useRef(null);
 
-  const onSelectedPerpage = (item: { value: number; label: string;}) => {
-    setPerpageCurrent(item.label)
+  useEffect(() => {
+    // perpageDropdownRef.current.activeElement.blur();
+  }, [perpageDropdownRef]);
+
+  const [perpageCurrent, setPerpageCurrent] = useState<string>('10');
+  const [showSelectPerpage, setShowSelectPerpage] = useState<boolean>(false);
+
+  const onSelectedPerpage = (item: { value: number; label: string }) => {
+    setPerpageCurrent(item.label);
     setFilter({
       page: `${currentPage}`,
-      size: `${item.value}`
-    })
-    setShowSelectPerpage(false)
-  }
+      size: `${item.value}`,
+    });
+    setShowSelectPerpage(false);
+  };
 
-  const start = (currentPage - 1) * perPage + 1
-  const end = currentPage * perPage > totalItems ? totalItems : currentPage * perPage
+  const start = (currentPage - 1) * perPage + 1;
+  const end = currentPage * perPage > totalItems ? totalItems : currentPage * perPage;
 
   return (
     <div className="flex items-center ml-3 justify-center mb-5 sm:mb-0">
-      <div className={`${showSelectPerpage ? 'bg-blue-500' : 'bg-gray-200'} ekp-pagination-dropdown relative cursor-pointer rounded inline-flex sm:flex items-center px-4 h-9 hover:bg-blue-500 duration-300`} onClick={() => setShowSelectPerpage(!showSelectPerpage)}>
-        <span className={`${showSelectPerpage ? 'text-white' : 'text-gray-500'} ekp-pagination-dropdown-label mr-3`}>{perpageCurrent}</span>
+      <div
+        className={`${
+          showSelectPerpage ? 'bg-blue-500' : 'bg-gray-200'
+        } ekp-pagination-dropdown relative cursor-pointer rounded inline-flex sm:flex items-center px-4 h-9 hover:bg-blue-500 duration-300`}
+        onClick={() => setShowSelectPerpage(!showSelectPerpage)}
+        ref={perpageDropdownRef}
+      >
+        <span className={`${showSelectPerpage ? 'text-white' : 'text-gray-500'} ekp-pagination-dropdown-label mr-3`}>
+          {perpageCurrent}
+        </span>
         <i className={`fas fa-chevron-down text-sm ${showSelectPerpage ? 'text-white' : 'text-gray-500'}`}></i>
-        {showSelectPerpage && 
+        {showSelectPerpage && (
           <div>
             <div className="absolute -top-40 left-0 bg-white shadow-lg w-full z-20">
-            {dataPerpage && dataPerpage.length > 0 &&
-              dataPerpage.map(item => {
-                return (
-                  <div key={JSON.stringify(item.value)} className={`${perpageCurrent === item.label ? 'bg-gray-100' : ''} py-1 px-4 hover:bg-gray-100`} onClick={() => onSelectedPerpage(item)}>
-                    <span>{item.label}</span>
-                  </div>
-                )
-              })}
+              {dataPerpage &&
+                dataPerpage.length > 0 &&
+                dataPerpage.map((item) => {
+                  return (
+                    <div
+                      key={JSON.stringify(item.value)}
+                      className={`${perpageCurrent === item.label ? 'bg-gray-100' : ''} py-1 px-4 hover:bg-gray-100`}
+                      onClick={() => onSelectedPerpage(item)}
+                    >
+                      <span>{item.label}</span>
+                    </div>
+                  );
+                })}
             </div>
           </div>
-        }
+        )}
       </div>
       <div className="ml-3">
         <span>{`Showing ${start} - ${end} of ${totalItems}`}</span>
       </div>
-      
+
       {/* {showSelectPerpage && <div className="w-screen h-screen z-10 opacity-0" onClick={() => setShowSelectPerpage(!showSelectPerpage)}></div>} */}
     </div>
-  )
-}
+  );
+};
 
-export const PaginationUI: React.FC<{ data: Pagination<unknown> | null, prefix: string }> = ({ data, prefix }) => {
+export const PaginationUI: React.FC<{ data: Pagination<unknown> | null; prefix: string }> = ({ data, prefix }) => {
+  const setFilter = useFilter(prefix);
+
   if (data === null) {
     return null;
   }
 
-  const setFilter = useFilter(prefix);
   const { pagination } = data;
   const { currentPage, totalPages, perPage } = pagination;
 
@@ -154,26 +177,52 @@ export const PaginationUI: React.FC<{ data: Pagination<unknown> | null, prefix: 
   }
 
   const onSelectPage = (page: number, disabled: boolean) => {
-    !disabled && setFilter({
-      page: `${page}`,
-      size: `${perPage}`
-    })
-  }
-  
+    !disabled &&
+      setFilter({
+        page: `${page}`,
+        size: `${perPage}`,
+      });
+  };
+
   return (
     <PaginationStyle>
       <div className="w-full sm:w-auto">
-        <PerpageDropdown pagination={pagination} dataPerpage={dataPerpage} prefix={prefix}/>
+        <PerpageDropdown pagination={pagination} dataPerpage={dataPerpage} prefix={prefix} />
       </div>
-      
+
       <div className="w-full sm:w-auto flex justify-center">
-        <PageNumber page={1} special="first" disable={currentPage === 1} onClick={() => onSelectPage(1, currentPage === 1)}/>
-        <PageNumber page={currentPage - 1} special="prev" disable={currentPage === 1} onClick={() => onSelectPage(currentPage - 1, currentPage === 1)}/>
+        <PageNumber
+          page={1}
+          special="first"
+          disable={currentPage === 1}
+          onClick={() => onSelectPage(1, currentPage === 1)}
+        />
+        <PageNumber
+          page={currentPage - 1}
+          special="prev"
+          disable={currentPage === 1}
+          onClick={() => onSelectPage(currentPage - 1, currentPage === 1)}
+        />
         {nums.map((idx) => (
-          <PageNumber page={idx} key={`page_${idx}`} selected={currentPage === idx} onClick={() => onSelectPage(idx, false)}/>
+          <PageNumber
+            page={idx}
+            key={`page_${idx}`}
+            selected={currentPage === idx}
+            onClick={() => onSelectPage(idx, false)}
+          />
         ))}
-        <PageNumber page={currentPage + 1} special="next" disable={currentPage >= totalPages} onClick={() => onSelectPage(currentPage + 1, currentPage >= totalPages)}/>
-        <PageNumber page={totalPages} special="last" disable={currentPage >= totalPages} onClick={() => onSelectPage(totalPages, currentPage >= totalPages)} />
+        <PageNumber
+          page={currentPage + 1}
+          special="next"
+          disable={currentPage >= totalPages}
+          onClick={() => onSelectPage(currentPage + 1, currentPage >= totalPages)}
+        />
+        <PageNumber
+          page={totalPages}
+          special="last"
+          disable={currentPage >= totalPages}
+          onClick={() => onSelectPage(totalPages, currentPage >= totalPages)}
+        />
       </div>
     </PaginationStyle>
   );

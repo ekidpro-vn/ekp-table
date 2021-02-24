@@ -58,7 +58,7 @@ const RenderBody: React.FC<{
 
 const MemoizedHeader = React.memo(RenderHeader);
 const MemoizedBody = React.memo(RenderBody);
-const scrollOnMobile: React.CSSProperties = {overflowX: 'scroll'}
+const scrollOnMobile: React.CSSProperties = { overflowX: 'scroll' };
 
 export const Table: React.FC<TableProps> = (props) => {
   const { structure, prefix } = props;
@@ -77,11 +77,8 @@ export const Table: React.FC<TableProps> = (props) => {
     if (prefix && /^[a-zA-Z]+$/g.test(prefix) === false) {
       pf = '';
     }
-    
-    const parsed = queryString.parse(location.search);
 
-    // console.log('parsed final', parsed);
-    
+    const parsed = queryString.parse(location.search);
 
     const filter: Record<string, unknown> = {};
     for (const [key, value] of Object.entries(parsed)) {
@@ -94,10 +91,9 @@ export const Table: React.FC<TableProps> = (props) => {
       if (['page', 'size'].includes(filterKey)) {
         continue;
       }
-      
+
       filter[filterKey] = value;
     }
-
     fetch({
       url,
       page: parseInt((parsed[`${pf}_page`] ?? '1') as string, 10),
@@ -131,53 +127,27 @@ export const Table: React.FC<TableProps> = (props) => {
         </tbody>
       </table>
       <div className="mt-8 mb-5">
-        <PaginationUI data={data} prefix={prefix}/>
+        <PaginationUI data={data} prefix={prefix} />
       </div>
     </div>
   );
 };
 
-// export const useFilter = (prefix: string): ((key: string, params: string | undefined) => void) => {
-//   const history = useHistory();
-
-//   return useCallback(
-//     (key: string, params: string | undefined) => {
-//       const parsed = queryString.parse(window.location.search);
-//       const queryKey = `${prefix}_${key}`;
-
-//       if (parsed[queryKey] === params) {
-//         return;
-//       }
-
-//       parsed[queryKey] = params || null;
-
-//       history.push({
-//         pathname: window.location.pathname,
-//         search: queryString.stringify(parsed),
-//       });
-
-//     },
-//     [history, prefix]
-//   );
-// };
-
-
-export const useFilter = (prefix: string): ((params: Record<string,string|undefined>) => void) => {
+export const useFilter = (prefix: string): ((params: Record<string, string | undefined>) => void) => {
   const history = useHistory();
 
   return useCallback(
-    (params:Record<string,string|undefined>) => {
+    (params: Record<string, string | undefined>) => {
       const parsed = queryString.parse(window.location.search);
 
       for (const [key, value] of Object.entries(params)) {
-        parsed[`${prefix}_${key}`] = value || null
+        parsed[`${prefix}_${key}`] = value || null;
       }
 
       history.push({
         pathname: window.location.pathname,
         search: queryString.stringify(parsed),
       });
-
     },
     [history, prefix]
   );
