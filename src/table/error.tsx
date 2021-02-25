@@ -1,39 +1,20 @@
 import React from 'react';
-import styled from 'styled-components';
-
-const ErrorPageDiv = styled.div`
-  background-color: #fff;
-  color: #000;
-  font-family: helvetica, arial, sans-serif;
-  font-size: 1.4em;
-  line-height: 1.5;
-
-  .emoji {
-    font-size: 9em;
-    text-align: center;
-  }
-  .title {
-    text-align: center;
-    line-height: 0em;
-    color: grey;
-  }
-  .text {
-    text-align: center;
-  }
-`;
+import ImageError from '../assets/error-image.png';
 
 export const ErrorPage: React.FC = () => {
   return (
-    <ErrorPageDiv>
-      <div className="centered">
-        <div className="emoji">
-          <p className="text">
-            Looks like our server crashed 🙀
+    <div className="mx-auto my-4">
+      <div className="flex justify-center items-center">
+        <img src={ImageError} alt="error" className="w-52 mr-10" />
+        <div>
+          <span className="text-5xl font-bold block text-gray-700">Oops !</span>
+          <span className="block text-gray-700 mt-8 text-xl">
+            Looks like our server crashed !
             <br />
             We're working on a quick fix, come back soon.
-          </p>
+          </span>
         </div>
       </div>
-    </ErrorPageDiv>
+    </div>
   );
 };
