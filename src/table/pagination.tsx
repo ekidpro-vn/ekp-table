@@ -196,12 +196,12 @@ export const PaginationUI: React.FC<{ data: Pagination<unknown> | null; prefix: 
 
   return (
     <PaginationStyle>
-      <div className="h-28 sm:h-6">
-        <div className="perpage-dropdown w-full sm:w-auto absolute left-0 bottom-28 sm:left-8 sm:bottom-20">
+      <div className="h-28 sm:h-4">
+        <div className="perpage-dropdown w-full sm:w-auto absolute left-0 bottom-28 sm:bottom-5">
           <PerpageDropdown pagination={pagination} dataPerpage={dataPerpage} prefix={prefix} />
         </div>
 
-        <div className="page-number w-full sm:w-auto flex justify-center absolute right-0 bottom-20 sm:right-8 sm:bottom-20">
+        <div className="page-number w-full sm:w-auto flex justify-center absolute right-0 bottom-20 sm:bottom-5">
           <PageNumber
             page={1}
             special="first"

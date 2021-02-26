@@ -122,8 +122,8 @@ export const Table: React.FC<TableProps> = (props) => {
   }
 
   return (
-    <div style={scrollOnMobile}>
-      <table className="w-full overflow-auto table-auto relative">
+    <div style={scrollOnMobile} className="relative">
+      <table className="w-full overflow-auto table-auto">
         <thead>
           <MemoizedHeader structure={structure} />
         </thead>
