@@ -196,43 +196,45 @@ export const PaginationUI: React.FC<{ data: Pagination<unknown> | null; prefix: 
 
   return (
     <PaginationStyle>
-      <div className="w-full sm:w-auto">
-        <PerpageDropdown pagination={pagination} dataPerpage={dataPerpage} prefix={prefix} />
-      </div>
+      <div className="h-28 sm:h-6">
+        <div className="perpage-dropdown w-full sm:w-auto absolute left-0 bottom-28 sm:left-8 sm:bottom-20">
+          <PerpageDropdown pagination={pagination} dataPerpage={dataPerpage} prefix={prefix} />
+        </div>
 
-      <div className="w-full sm:w-auto flex justify-center">
-        <PageNumber
-          page={1}
-          special="first"
-          disable={currentPage === 1}
-          onClick={() => onSelectPage(1, currentPage === 1)}
-        />
-        <PageNumber
-          page={currentPage - 1}
-          special="prev"
-          disable={currentPage === 1}
-          onClick={() => onSelectPage(currentPage - 1, currentPage === 1)}
-        />
-        {nums.map((idx) => (
+        <div className="page-number w-full sm:w-auto flex justify-center absolute right-0 bottom-20 sm:right-8 sm:bottom-20">
           <PageNumber
-            page={idx}
-            key={`page_${idx}`}
-            selected={currentPage === idx}
-            onClick={() => onSelectPage(idx, false)}
+            page={1}
+            special="first"
+            disable={currentPage === 1}
+            onClick={() => onSelectPage(1, currentPage === 1)}
           />
-        ))}
-        <PageNumber
-          page={currentPage + 1}
-          special="next"
-          disable={currentPage >= totalPages}
-          onClick={() => onSelectPage(currentPage + 1, currentPage >= totalPages)}
-        />
-        <PageNumber
-          page={totalPages}
-          special="last"
-          disable={currentPage >= totalPages}
-          onClick={() => onSelectPage(totalPages, currentPage >= totalPages)}
-        />
+          <PageNumber
+            page={currentPage - 1}
+            special="prev"
+            disable={currentPage === 1}
+            onClick={() => onSelectPage(currentPage - 1, currentPage === 1)}
+          />
+          {nums.map((idx) => (
+            <PageNumber
+              page={idx}
+              key={`page_${idx}`}
+              selected={currentPage === idx}
+              onClick={() => onSelectPage(idx, false)}
+            />
+          ))}
+          <PageNumber
+            page={currentPage + 1}
+            special="next"
+            disable={currentPage >= totalPages}
+            onClick={() => onSelectPage(currentPage + 1, currentPage >= totalPages)}
+          />
+          <PageNumber
+            page={totalPages}
+            special="last"
+            disable={currentPage >= totalPages}
+            onClick={() => onSelectPage(totalPages, currentPage >= totalPages)}
+          />
+        </div>
       </div>
     </PaginationStyle>
   );

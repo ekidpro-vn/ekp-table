@@ -8,6 +8,10 @@ export const PaginationStyle = styled.ul`
 
   @media (max-width: 639px) {
     display: block;
+    .perpage-dropdown,
+    .page-number {
+      margin: 0 auto;
+    }
   }
 
   li {

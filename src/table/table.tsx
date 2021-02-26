@@ -20,7 +20,7 @@ const RenderHeader: React.FC<{ structure: StructureProps[] }> = ({ structure }) 
       {structure &&
         structure.map((item: StructureProps, index: number) => {
           return (
-            <th className="text-gray-900 bg-gray-50 px-4 py-6 font-extrabold" key={index}>
+            <th className="text-gray-900 bg-gray-50 font-extrabold p-5" key={index}>
               {item.titleLanguage}
             </th>
           );
@@ -49,7 +49,7 @@ const RenderBody: React.FC<{
           <tr key={index} className="bg-white border-gray-200 text-left py-3" style={{ borderTopWidth: 1 }}>
             {structure.map((item2) => {
               return (
-                <td key={JSON.stringify(item2)} className="p-3">
+                <td key={JSON.stringify(item2)} className="p-5">
                   {loader.render(item, item2.field) ?? item[`${item2.field}`]}
                 </td>
               );
@@ -123,7 +123,7 @@ export const Table: React.FC<TableProps> = (props) => {
 
   return (
     <div style={scrollOnMobile}>
-      <table className="w-full overflow-auto table-auto">
+      <table className="w-full overflow-auto table-auto relative">
         <thead>
           <MemoizedHeader structure={structure} />
         </thead>
@@ -131,7 +131,7 @@ export const Table: React.FC<TableProps> = (props) => {
           <MemoizedBody data={data?.data} structure={structure} loader={loader.current} />
         </tbody>
       </table>
-      <div className="mt-8 mb-5">
+      <div className="my-8">
         <PaginationUI data={data} prefix={prefix} />
       </div>
     </div>

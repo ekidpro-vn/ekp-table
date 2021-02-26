@@ -10,11 +10,25 @@ export default {
 } as Meta;
 
 const Template: Story<TableProps> = (args) => <Table {...args} />;
-type DefaultDataType = { uid: number; fullname: string; mobile: string };
+type DefaultDataType = {
+  id: number;
+  fullname: string;
+  mobile: string;
+  email: string;
+  address: string;
+  status: string;
+  created_at: string;
+  updated_at: string;
+};
 const StructureAdminList: StructureProps[] = [
-  { enable: true, field: 'uid', titleLanguage: '#' },
-  { enable: true, field: 'fullname', titleLanguage: 'INFO' },
+  { enable: true, field: 'id', titleLanguage: '#' },
+  { enable: true, field: 'fullname', titleLanguage: 'NAME' },
   { enable: true, field: 'mobile', titleLanguage: 'PHONE' },
+  { enable: true, field: 'email', titleLanguage: 'EMAIL' },
+  { enable: true, field: 'address', titleLanguage: 'ADDRESS' },
+  { enable: true, field: 'status', titleLanguage: 'STATUS' },
+  { enable: true, field: 'created_at', titleLanguage: 'CREATED_AT' },
+  { enable: true, field: 'updated_at', titleLanguage: 'UPDATED_AT' },
 ];
 const defaultLoader: Loader<DefaultDataType, { keyword: string }> = {
   url: 'api on server, we will mock something',
@@ -26,54 +40,54 @@ const defaultLoader: Loader<DefaultDataType, { keyword: string }> = {
     }).then(() => {
       const items = [
         {
-          uid: 1,
-          fullname: '1',
-          mobile: '1',
+          id: 1,
+          fullname: 'Nguyễn Văn A',
+          mobile: '0123456789',
+          email: 'nguyenvana@gmail.com',
+          address: 'Hà Nội - Việt Nam',
+          status: 'ACTIVE',
+          created_at: '03/02/2021 15:33',
+          updated_at: '03/02/2021 15:33',
         },
         {
-          uid: 2,
-          fullname: '2',
-          mobile: '2',
+          id: 2,
+          fullname: 'Nguyễn Văn B',
+          mobile: '0123456789',
+          email: 'nguyenvana@gmail.com',
+          address: 'Hà Nội - Việt Nam',
+          status: 'ACTIVE',
+          created_at: '03/02/2021 15:33',
+          updated_at: '03/02/2021 15:33',
         },
         {
-          uid: 3,
-          fullname: '3',
-          mobile: '3',
+          id: 3,
+          fullname: 'Nguyễn Văn C',
+          mobile: '0123456789',
+          email: 'nguyenvana@gmail.com',
+          address: 'Hà Nội - Việt Nam',
+          status: 'ACTIVE',
+          created_at: '03/02/2021 15:33',
+          updated_at: '03/02/2021 15:33',
         },
         {
-          uid: 4,
-          fullname: '4',
-          mobile: '4',
+          id: 4,
+          fullname: 'Nguyễn Văn D',
+          mobile: '0123456789',
+          email: 'nguyenvana@gmail.com',
+          address: 'Hà Nội - Việt Nam',
+          status: 'ACTIVE',
+          created_at: '03/02/2021 15:33',
+          updated_at: '03/02/2021 15:33',
         },
         {
-          uid: 5,
-          fullname: '5',
-          mobile: '5',
-        },
-        {
-          uid: 6,
-          fullname: '6',
-          mobile: '6',
-        },
-        {
-          uid: 7,
-          fullname: '7',
-          mobile: '7',
-        },
-        {
-          uid: 8,
-          fullname: '8',
-          mobile: '8',
-        },
-        {
-          uid: 9,
-          fullname: '9',
-          mobile: '9',
-        },
-        {
-          uid: 10,
-          fullname: '10',
-          mobile: '10',
+          id: 5,
+          fullname: 'Nguyễn Văn E',
+          mobile: '0123456789',
+          email: 'nguyenvana@gmail.com',
+          address: 'Hà Nội - Việt Nam',
+          status: 'ACTIVE',
+          created_at: '03/02/2021 15:33',
+          updated_at: '03/02/2021 15:33',
         },
       ];
 
@@ -82,8 +96,8 @@ const defaultLoader: Loader<DefaultDataType, { keyword: string }> = {
         pagination: {
           currentPage: 1, // input.page,
           perPage: 5, // input.size,
-          totalItems: 10,
-          totalPages: 2,
+          totalItems: 5,
+          totalPages: 1,
         },
       };
 
