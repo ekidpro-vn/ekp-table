@@ -115,7 +115,7 @@ const PerpageDropdown: React.FC<{
   useOutsideElement(perpageDropdownRef);
 
   return (
-    <div className="flex items-center ml-3 justify-center mb-5 sm:mb-0">
+    <div className="flex items-center sm:ml-3 justify-center mb-5 sm:mb-0">
       <div
         className={`${
           showSelectPerpage ? 'bg-blue-500' : 'bg-gray-200'
@@ -196,12 +196,12 @@ export const PaginationUI: React.FC<{ data: Pagination<unknown> | null; prefix: 
 
   return (
     <PaginationStyle>
-      <div className="h-28 sm:h-4">
-        <div className="perpage-dropdown w-full sm:w-auto absolute left-0 bottom-28 sm:bottom-5">
+      <div className="w-full h-full sm:flex justify-between">
+        <div className="perpage-dropdown w-full sm:w-auto">
           <PerpageDropdown pagination={pagination} dataPerpage={dataPerpage} prefix={prefix} />
         </div>
 
-        <div className="page-number w-full sm:w-auto flex justify-center absolute right-0 bottom-20 sm:bottom-5">
+        <div className="page-number w-full sm:w-auto flex justify-center">
           <PageNumber
             page={1}
             special="first"

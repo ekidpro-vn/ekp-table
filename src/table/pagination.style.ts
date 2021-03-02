@@ -1,10 +1,9 @@
 import styled from 'styled-components';
 
-export const PaginationStyle = styled.ul`
-  display: flex;
+export const PaginationStyle = styled.div`
+  height: 100%;
+  width: 100%;
   background-color: white;
-  align-items: center;
-  justify-content: space-between;
 
   @media (max-width: 639px) {
     display: block;
