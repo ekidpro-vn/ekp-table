@@ -1,7 +1,7 @@
 import queryString from 'query-string';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
-import { Code } from 'react-content-loader';
 import { useHistory, useLocation } from 'react-router-dom';
+import { LoadingIcon } from '../assets/loading';
 import ImageNoData from '../assets/no-data.png';
 import { ErrorPage } from './error';
 import { Loader, Pagination } from './loader';
@@ -12,15 +12,16 @@ export interface TableProps {
   prefix?: string;
   loader: Loader<any, Record<string, unknown>>;
   structure: StructureProps[];
+  onRefresh?: () => void;
 }
 
 const RenderHeader: React.FC<{ structure: StructureProps[] }> = ({ structure }) => {
   return (
     <tr className="bg-gray-800 text-left rounded">
       {structure &&
-        structure.map((item: StructureProps, index: number) => {
+        structure.map((item) => {
           return (
-            <th className="text-gray-900 bg-gray-50 px-4 py-6 font-extrabold" key={index}>
+            <th className="text-gray-900 bg-gray-50 font-extrabold p-5" key={item.titleLanguage}>
               {item.titleLanguage}
             </th>
           );
@@ -46,10 +47,14 @@ const RenderBody: React.FC<{
     <>
       {data.map((item, index) => {
         return (
-          <tr key={index} className="bg-white border-gray-200 text-left py-3" style={{ borderTopWidth: 1 }}>
+          <tr
+            key={JSON.stringify(index)}
+            className="bg-white border-gray-200 text-left py-3"
+            style={{ borderTopWidth: 1 }}
+          >
             {structure.map((item2) => {
               return (
-                <td key={JSON.stringify(item2)} className="p-3">
+                <td key={JSON.stringify(item2)} className="p-5">
                   {loader.render(item, item2.field) ?? item[`${item2.field}`]}
                 </td>
               );
@@ -63,10 +68,9 @@ const RenderBody: React.FC<{
 
 const MemoizedHeader = React.memo(RenderHeader);
 const MemoizedBody = React.memo(RenderBody);
-const scrollOnMobile: React.CSSProperties = { overflowX: 'scroll' };
 
 export const Table: React.FC<TableProps> = (props) => {
-  const { structure, prefix } = props;
+  const { structure, prefix, onRefresh } = props;
   const location = useLocation<unknown>();
   const loader = useRef(props.loader);
   const [data, setData] = useState<Pagination<unknown> | null>(null);
@@ -118,21 +122,32 @@ export const Table: React.FC<TableProps> = (props) => {
   }
 
   if (data === null && err === null) {
-    return <Code style={{ maxWidth: 300 }} />;
+    return (
+      <div className="flex items-center justify-center mt-40 min-h-96">
+        <div className="flex shadow-md rounded-full items-center px-4 overflow-hidden">
+          <LoadingIcon />
+          <span className="mx-3 text-indigo-900 font-semibold">Loading...</span>
+        </div>
+      </div>
+    );
   }
 
   return (
-    <div style={scrollOnMobile}>
-      <table className="w-full overflow-auto table-auto">
-        <thead>
-          <MemoizedHeader structure={structure} />
-        </thead>
-        <tbody className="bg-gray-200 w-full">
-          <MemoizedBody data={data?.data} structure={structure} loader={loader.current} />
-        </tbody>
-      </table>
-      <div className="mt-8 mb-5">
-        <PaginationUI data={data} prefix={prefix} />
+    <div>
+      <div className="overflow-hidden">
+        <div className="overflow-x-scroll">
+          <table className="w-full table-auto">
+            <thead>
+              <MemoizedHeader structure={structure} />
+            </thead>
+            <tbody className="bg-gray-200 w-full">
+              <MemoizedBody data={data?.data} structure={structure} loader={loader.current} />
+            </tbody>
+          </table>
+        </div>
+        <div className="my-8 h-20 sm:h-10 w-full">
+          <PaginationUI data={data} prefix={prefix} />
+        </div>
       </div>
     </div>
   );
