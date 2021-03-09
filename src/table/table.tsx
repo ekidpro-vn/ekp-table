@@ -4,15 +4,29 @@ import { useHistory, useLocation } from 'react-router-dom';
 import { LoadingIcon } from '../assets/loading';
 import ImageNoData from '../assets/no-data.png';
 import { ErrorPage } from './error';
+import { FilterTable } from './filter';
 import { Loader, Pagination } from './loader';
 import { PaginationUI } from './pagination';
 import { StructureProps } from './types';
 
-export interface TableProps {
+export interface TableProps extends WrapperProps {
   prefix?: string;
   loader: Loader<any, Record<string, unknown>>;
   structure: StructureProps[];
+  CustomFilter?: React.FC;
+  dataFilter?: { FilterComponent: React.ReactElement }[];
   onRefresh?: () => void;
+  Wrapper?: React.FC<WrapperProps>;
+}
+
+export interface FilterProps {
+  CustomFilter?: React.FC;
+  dataFilter?: { FilterComponent: React.ReactElement }[];
+}
+
+export interface WrapperProps {
+  titleWrapper?: string | React.ReactElement;
+  toolbarWrapper?: React.ReactElement;
 }
 
 const RenderHeader: React.FC<{ structure: StructureProps[] }> = ({ structure }) => {
@@ -66,17 +80,29 @@ const RenderBody: React.FC<{
   );
 };
 
+const RenderFilter: React.FC<FilterProps> = (props) => {
+  const { CustomFilter, dataFilter } = props;
+  if (CustomFilter) {
+    return <CustomFilter />;
+  }
+  if (dataFilter) {
+    return <FilterTable dataFilter={dataFilter} />;
+  }
+  return null;
+};
+
 const MemoizedHeader = React.memo(RenderHeader);
 const MemoizedBody = React.memo(RenderBody);
+const MemoizedFilter = React.memo(RenderFilter);
 
 export const Table: React.FC<TableProps> = (props) => {
-  const { structure, prefix, onRefresh } = props;
+  const { structure, prefix, onRefresh, Wrapper, CustomFilter, titleWrapper, toolbarWrapper, dataFilter } = props;
   const location = useLocation<unknown>();
   const loader = useRef(props.loader);
   const [data, setData] = useState<Pagination<unknown> | null>(null);
   const [err, setError] = useState<Error | null>(null);
 
-  useEffect(() => {
+  const getDataFromRemoteServer = useCallback(() => {
     const { url, fetch } = loader.current;
     if (typeof url === 'undefined' || url === null) {
       throw new Error(`Invalid Url`);
@@ -117,13 +143,34 @@ export const Table: React.FC<TableProps> = (props) => {
       });
   }, [loader, prefix, location]);
 
+  useEffect(getDataFromRemoteServer);
+
   if (err !== null) {
+    if (Wrapper) {
+      return (
+        <Wrapper titleWrapper={titleWrapper} toolbarWrapper={toolbarWrapper}>
+          <ErrorPage />
+        </Wrapper>
+      );
+    }
     return <ErrorPage />;
   }
 
   if (data === null && err === null) {
+    if (Wrapper) {
+      return (
+        <Wrapper titleWrapper={titleWrapper} toolbarWrapper={toolbarWrapper}>
+          <div className="flex items-center justify-center mt-40 min-h-96 bg-white">
+            <div className="flex shadow-md rounded-full items-center px-4 overflow-hidden">
+              <LoadingIcon />
+              <span className="mx-3 text-indigo-900 font-semibold">Loading...</span>
+            </div>
+          </div>
+        </Wrapper>
+      );
+    }
     return (
-      <div className="flex items-center justify-center mt-40 min-h-96">
+      <div className="flex items-center justify-center mt-40 min-h-96 bg-white">
         <div className="flex shadow-md rounded-full items-center px-4 overflow-hidden">
           <LoadingIcon />
           <span className="mx-3 text-indigo-900 font-semibold">Loading...</span>
@@ -132,9 +179,33 @@ export const Table: React.FC<TableProps> = (props) => {
     );
   }
 
+  if (Wrapper) {
+    return (
+      <Wrapper titleWrapper={titleWrapper} toolbarWrapper={toolbarWrapper}>
+        <div className="overflow-hidden bg-white">
+          <MemoizedFilter dataFilter={dataFilter} CustomFilter={CustomFilter} />
+          <div className="overflow-x-scroll">
+            <table className="w-full table-auto">
+              <thead>
+                <MemoizedHeader structure={structure} />
+              </thead>
+              <tbody className="bg-gray-200 w-full">
+                <MemoizedBody data={data?.data} structure={structure} loader={loader.current} />
+              </tbody>
+            </table>
+          </div>
+          <div className="my-8 h-20 sm:h-10 w-full">
+            <PaginationUI data={data} prefix={prefix} />
+          </div>
+        </div>
+      </Wrapper>
+    );
+  }
+
   return (
     <div>
       <div className="overflow-hidden">
+        <MemoizedFilter dataFilter={dataFilter} CustomFilter={CustomFilter} />
         <div className="overflow-x-scroll">
           <table className="w-full table-auto">
             <thead>
@@ -145,7 +216,7 @@ export const Table: React.FC<TableProps> = (props) => {
             </tbody>
           </table>
         </div>
-        <div className="my-8 h-20 sm:h-10 w-full">
+        <div className="my-8 h-19 sm:h-9 w-full">
           <PaginationUI data={data} prefix={prefix} />
         </div>
       </div>

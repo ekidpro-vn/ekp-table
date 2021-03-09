@@ -103,7 +103,7 @@ const PerpageDropdown: React.FC<{
   const onSelectedPerpage = (item: { value: number; label: string }) => {
     setPerpageCurrent(item.label);
     setFilter({
-      page: `${currentPage}`,
+      page: `1`,
       size: `${item.value}`,
     });
     setShowSelectPerpage(false);
@@ -129,13 +129,23 @@ const PerpageDropdown: React.FC<{
         <i className={`fas fa-chevron-down text-sm ${showSelectPerpage ? 'text-white' : 'text-gray-500'}`}></i>
         {showSelectPerpage && (
           <div>
-            <div className="absolute -top-40 left-0 bg-white shadow-lg w-full z-20">
+            <div className="absolute left-0 bg-white perpage-options w-full z-20">
               {dataPerpage &&
                 dataPerpage.length > 0 &&
                 dataPerpage.map((item) => {
+                  if (item.value > totalItems) {
+                    return (
+                      <div
+                        key={`perpage_${item.value}`}
+                        className="py-1 px-4 bg-gray-200 cursor-not-allowed border border-t-0 border-l-0 border-r-0 border-gray-100"
+                      >
+                        <span className="text-gray-500">{item.label}</span>
+                      </div>
+                    );
+                  }
                   return (
                     <div
-                      key={JSON.stringify(item.value)}
+                      key={`perpage_${item.value}`}
                       className={`${perpageCurrent === item.label ? 'bg-gray-100' : ''} py-1 px-4 hover:bg-gray-100`}
                       onClick={() => onSelectedPerpage(item)}
                     >
@@ -150,8 +160,6 @@ const PerpageDropdown: React.FC<{
       <div className="ml-3">
         <span>{`Showing ${start} - ${end} of ${totalItems}`}</span>
       </div>
-
-      {/* {showSelectPerpage && <div className="w-screen h-screen z-10 opacity-0" onClick={() => setShowSelectPerpage(!showSelectPerpage)}></div>} */}
     </div>
   );
 };
