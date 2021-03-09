@@ -82,7 +82,7 @@ const PerpageDropdown: React.FC<{
 }> = (props) => {
   const { currentPage, totalItems, perPage } = props.pagination;
   const setFilter = useFilter(props.prefix);
-  const [perpageCurrent, setPerpageCurrent] = useState<string>('10');
+  const [perpageCurrent, setPerpageCurrent] = useState<string>('5');
   const [showSelectPerpage, setShowSelectPerpage] = useState<boolean>(false);
   const perpageDropdownRef = useRef<HTMLDivElement>(null);
 
