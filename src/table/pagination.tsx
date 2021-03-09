@@ -1,6 +1,6 @@
 import clsx from 'clsx';
 import React, { RefObject, useEffect, useRef, useState } from 'react';
-import { DataPagination, Pagination } from './loader';
+import { DataPagination } from './loader';
 import { PaginationStyle } from './pagination.style';
 import { useFilter } from './table';
 
@@ -129,7 +129,7 @@ const PerpageDropdown: React.FC<{
         <i className={`fas fa-chevron-down text-sm ${showSelectPerpage ? 'text-white' : 'text-gray-500'}`}></i>
         {showSelectPerpage && (
           <div>
-            <div className="absolute left-0 bg-white perpage-options w-full z-20">
+            <div className="absolute left-0 bg-white overflow-hidden perpage-options w-full z-20">
               {dataPerpage &&
                 dataPerpage.length > 0 &&
                 dataPerpage.map((item) => {
@@ -137,7 +137,7 @@ const PerpageDropdown: React.FC<{
                     return (
                       <div
                         key={`perpage_${item.value}`}
-                        className="py-1 px-4 bg-gray-200 cursor-not-allowed border border-t-0 border-l-0 border-r-0 border-gray-100"
+                        className="py-1 px-4 bg-gray-100 cursor-not-allowed border border-t-0 border-l-0 border-r-0 border-gray-100"
                       >
                         <span className="text-gray-500">{item.label}</span>
                       </div>
@@ -146,10 +146,14 @@ const PerpageDropdown: React.FC<{
                   return (
                     <div
                       key={`perpage_${item.value}`}
-                      className={`${perpageCurrent === item.label ? 'bg-gray-100' : ''} py-1 px-4 hover:bg-gray-100`}
+                      className={`${
+                        perpageCurrent === item.label ? 'bg-blue-500' : ''
+                      } group py-1 px-4 rounded-sm border border-t-0 border-l-0 border-r-0 border-white hover:bg-blue-500`}
                       onClick={() => onSelectedPerpage(item)}
                     >
-                      <span>{item.label}</span>
+                      <span className={`${perpageCurrent === item.label ? 'text-white' : ''} group-hover:text-white`}>
+                        {item.label}
+                      </span>
                     </div>
                   );
                 })}
