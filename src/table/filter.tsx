@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import '../styles/filter.css';
 
 interface FilterProps {
   dataFilter: DataFilterProps[];

@@ -5,35 +5,19 @@ import { LoadingIcon } from '../assets/loading';
 import ImageNoData from '../assets/no-data.png';
 import { ErrorPage } from './error';
 import { FilterTable } from './filter';
-import { Loader, Pagination } from './loader';
+import { Pagination } from './loader';
 import { PaginationUI } from './pagination';
-import { StructureProps } from './types';
+import { BodyProps, FilterProps, HeaderProps, TableProps } from './types';
 
-export interface TableProps extends WrapperProps {
-  prefix?: string;
-  loader: Loader<any, Record<string, unknown>>;
-  structure: StructureProps[];
-  CustomFilter?: React.FC;
-  dataFilter?: { FilterComponent: React.ReactElement }[];
-  onRefresh?: () => void;
-  Wrapper?: React.FC<WrapperProps>;
-}
-
-export interface FilterProps {
-  CustomFilter?: React.FC;
-  dataFilter?: { FilterComponent: React.ReactElement }[];
-}
-
-export interface WrapperProps {
-  titleWrapper?: string | React.ReactElement;
-  toolbarWrapper?: React.ReactElement;
-}
-
-const RenderHeader: React.FC<{ structure: StructureProps[] }> = ({ structure }) => {
+const RenderHeader: React.FC<HeaderProps> = (props) => {
+  const { structure } = props;
   return (
     <tr className="bg-gray-800 text-left rounded">
       {structure &&
         structure.map((item) => {
+          if (!item.enable) {
+            return null;
+          }
           return (
             <th className="text-gray-900 bg-gray-50 font-extrabold p-5" key={item.titleLanguage}>
               {item.titleLanguage}
@@ -44,11 +28,8 @@ const RenderHeader: React.FC<{ structure: StructureProps[] }> = ({ structure }) 
   );
 };
 
-const RenderBody: React.FC<{
-  data: unknown;
-  structure: StructureProps[];
-  loader: Loader<any, Record<string, unknown>>;
-}> = ({ data, structure, loader }) => {
+const RenderBody: React.FC<BodyProps> = (props) => {
+  const { data, structure, loader } = props;
   if (!data || !Array.isArray(data) || data.length === 0) {
     return (
       <td colSpan={structure.length} className="bg-white w-full">
@@ -67,6 +48,9 @@ const RenderBody: React.FC<{
             style={{ borderTopWidth: 1 }}
           >
             {structure.map((item2) => {
+              if (!item2.enable) {
+                return null;
+              }
               return (
                 <td key={JSON.stringify(item2)} className="p-5">
                   {loader.render(item, item2.field) ?? item[`${item2.field}`]}
@@ -80,23 +64,11 @@ const RenderBody: React.FC<{
   );
 };
 
-const RenderFilter: React.FC<FilterProps> = (props) => {
-  const { CustomFilter, dataFilter } = props;
-  if (CustomFilter) {
-    return <CustomFilter />;
-  }
-  if (dataFilter) {
-    return <FilterTable dataFilter={dataFilter} />;
-  }
-  return null;
-};
-
 const MemoizedHeader = React.memo(RenderHeader);
 const MemoizedBody = React.memo(RenderBody);
-const MemoizedFilter = React.memo(RenderFilter);
 
 export const Table: React.FC<TableProps> = (props) => {
-  const { structure, prefix, onRefresh, Wrapper, CustomFilter, titleWrapper, toolbarWrapper, dataFilter } = props;
+  const { structure, prefix, onRefresh, Wrapper, titleWrapper, toolbarWrapper } = props;
   const location = useLocation<unknown>();
   const loader = useRef(props.loader);
   const [data, setData] = useState<Pagination<unknown> | null>(null);
@@ -183,7 +155,6 @@ export const Table: React.FC<TableProps> = (props) => {
     return (
       <Wrapper titleWrapper={titleWrapper} toolbarWrapper={toolbarWrapper}>
         <div className="overflow-hidden bg-white">
-          <MemoizedFilter dataFilter={dataFilter} CustomFilter={CustomFilter} />
           <div className="overflow-x-scroll">
             <table className="w-full table-auto">
               <thead>
@@ -205,7 +176,6 @@ export const Table: React.FC<TableProps> = (props) => {
   return (
     <div>
       <div className="overflow-hidden">
-        <MemoizedFilter dataFilter={dataFilter} CustomFilter={CustomFilter} />
         <div className="overflow-x-scroll">
           <table className="w-full table-auto">
             <thead>
@@ -242,4 +212,9 @@ export const useFilter = (prefix: string): ((params: Record<string, string | und
     },
     [history, prefix]
   );
+};
+
+export const Filter: React.FC<FilterProps> = (props) => {
+  const { dataFilter } = props;
+  return <FilterTable dataFilter={dataFilter} />;
 };
