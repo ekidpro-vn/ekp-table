@@ -208,7 +208,7 @@ export const PaginationUI: React.FC<{ data: Pagination<unknown> | null; prefix: 
 
   return (
     <PaginationStyle>
-      <div className="w-full h-full sm:flex justify-between">
+      <div className="w-full h-full sm:flex justify-between" data-testid="pagination">
         <div className="perpage-dropdown w-full sm:w-auto">
           <PerpageDropdown pagination={pagination} dataPerpage={dataPerpage} prefix={prefix} />
         </div>

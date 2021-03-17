@@ -1,6 +1,6 @@
 import queryString from 'query-string';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
-import { useHistory, useLocation } from 'react-router-dom';
+import { useHistory } from 'react-router-dom';
 import { LoadingIcon } from '../assets/loading';
 import ImageNoData from '../assets/no-data.png';
 import { ErrorPage } from './error';
@@ -32,7 +32,7 @@ const RenderBody: React.FC<BodyProps> = (props) => {
   const { data, structure, loader } = props;
   if (!data || !Array.isArray(data) || data.length === 0) {
     return (
-      <td colSpan={structure.length} className="bg-white w-full">
+      <td colSpan={structure.length} className="bg-white w-full" data-testid="empty">
         <img src={ImageNoData} alt="no data" className="block w-80 mx-auto" />
       </td>
     );
@@ -69,7 +69,6 @@ const MemoizedBody = React.memo(RenderBody);
 
 export const Table: React.FC<TableProps> = (props) => {
   const { structure, prefix, onRefresh, Wrapper, titleWrapper, toolbarWrapper } = props;
-  const location = useLocation<unknown>();
   const loader = useRef(props.loader);
   const [data, setData] = useState<Pagination<unknown> | null>(null);
   const [err, setError] = useState<Error | null>(null);
@@ -85,7 +84,7 @@ export const Table: React.FC<TableProps> = (props) => {
       pf = '';
     }
 
-    const parsed = queryString.parse(location.search);
+    const parsed = queryString.parse(window.location.search);
 
     const filter: Record<string, unknown> = {};
     for (const [key, value] of Object.entries(parsed)) {
@@ -113,85 +112,50 @@ export const Table: React.FC<TableProps> = (props) => {
       .catch((err: Error) => {
         setError(err);
       });
-  }, [loader, prefix, location]);
+  }, [loader, prefix]);
 
   useEffect(getDataFromRemoteServer);
 
   if (err !== null) {
-    if (Wrapper) {
-      return (
-        <Wrapper titleWrapper={titleWrapper} toolbarWrapper={toolbarWrapper}>
-          <ErrorPage />
-        </Wrapper>
-      );
-    }
-    return <ErrorPage />;
+    return Wrapper ? (
+      <Wrapper titleWrapper={titleWrapper} toolbarWrapper={toolbarWrapper} children={<ErrorPage />} />
+    ) : (
+      <ErrorPage />
+    );
   }
 
   if (data === null && err === null) {
-    if (Wrapper) {
-      return (
-        <Wrapper titleWrapper={titleWrapper} toolbarWrapper={toolbarWrapper}>
-          <div className="flex items-center justify-center mt-40 min-h-96 bg-white">
-            <div className="flex shadow-md rounded-full items-center px-4 overflow-hidden">
-              <LoadingIcon />
-              <span className="mx-3 text-indigo-900 font-semibold">Loading...</span>
-            </div>
-          </div>
-        </Wrapper>
-      );
-    }
-    return (
-      <div className="flex items-center justify-center mt-40 min-h-96 bg-white">
+    const tmp = (
+      <div className="flex items-center justify-center mt-40 min-h-96 bg-white" data-testid="loading">
         <div className="flex shadow-md rounded-full items-center px-4 overflow-hidden">
           <LoadingIcon />
           <span className="mx-3 text-indigo-900 font-semibold">Loading...</span>
         </div>
       </div>
     );
+
+    return Wrapper ? <Wrapper titleWrapper={titleWrapper} toolbarWrapper={toolbarWrapper} children={tmp} /> : tmp;
   }
 
-  if (Wrapper) {
-    return (
-      <Wrapper titleWrapper={titleWrapper} toolbarWrapper={toolbarWrapper}>
-        <div className="overflow-hidden bg-white">
-          <div className="overflow-x-scroll">
-            <table className="w-full table-auto">
-              <thead>
-                <MemoizedHeader structure={structure} />
-              </thead>
-              <tbody className="bg-gray-200 w-full">
-                <MemoizedBody data={data?.data} structure={structure} loader={loader.current} />
-              </tbody>
-            </table>
-          </div>
-          <div className="my-8 h-20 sm:h-10 w-full">
-            <PaginationUI data={data} prefix={prefix} />
-          </div>
-        </div>
-      </Wrapper>
-    );
-  }
-
-  return (
-    <div>
-      <div className="overflow-hidden">
-        <div className="overflow-x-scroll">
-          <table className="w-full table-auto">
-            <thead>
-              <MemoizedHeader structure={structure} />
-            </thead>
-            <tbody className="bg-gray-200 w-full">
-              <MemoizedBody data={data?.data} structure={structure} loader={loader.current} />
-            </tbody>
-          </table>
-        </div>
-        <div className="my-8 h-19 sm:h-9 w-full">
-          <PaginationUI data={data} prefix={prefix} />
-        </div>
+  const tmp = (
+    <div className="overflow-hidden" data-testid="table">
+      <div className="overflow-x-scroll">
+        <table className="w-full table-auto">
+          <thead>
+            <MemoizedHeader structure={structure} />
+          </thead>
+          <tbody className="bg-gray-200 w-full">
+            <MemoizedBody data={data?.data} structure={structure} loader={loader.current} />
+          </tbody>
+        </table>
+      </div>
+      <div className="my-8 h-19 sm:h-9 w-full">
+        <PaginationUI data={data} prefix={prefix} />
       </div>
     </div>
   );
+
+  return Wrapper ? <Wrapper titleWrapper={titleWrapper} toolbarWrapper={toolbarWrapper} children={tmp} /> : tmp;
 };
 
 export const useFilter = (prefix: string): ((params: Record<string, string | undefined>) => void) => {
