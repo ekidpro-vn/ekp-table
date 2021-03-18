@@ -126,7 +126,7 @@ export const Table: React.FC<TableProps> = (props) => {
 
   if (data === null && err === null) {
     const tmp = (
-      <div className="flex items-center justify-center mt-40 min-h-96 bg-white" data-testid="loading">
+      <div className="flex items-center justify-center mt-32 min-h-96 bg-white pt-10 pb-20" data-testid="loading">
         <div className="flex shadow-md rounded-full items-center px-4 overflow-hidden">
           <LoadingIcon />
           <span className="mx-3 text-indigo-900 font-semibold">Loading...</span>
@@ -140,7 +140,7 @@ export const Table: React.FC<TableProps> = (props) => {
   const tmp = (
     <div className="overflow-hidden" data-testid="table">
       <div className="overflow-x-scroll">
-        <table className="w-full table-auto">
+        <table className="w-full table-auto mb-4">
           <thead>
             <MemoizedHeader structure={structure} />
           </thead>

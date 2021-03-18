@@ -109,7 +109,7 @@ const PerpageDropdown: React.FC<{
     setShowSelectPerpage(false);
   };
 
-  const start = (currentPage - 1) * perPage + 1;
+  const start = totalItems === 0 ? 0 : (currentPage - 1) * perPage + 1;
   const end = currentPage * perPage > totalItems ? totalItems : currentPage * perPage;
 
   useOutsideElement(perpageDropdownRef);
