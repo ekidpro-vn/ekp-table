@@ -1,7 +1,7 @@
 import { Meta, Story } from '@storybook/react/types-6-0';
 import React from 'react';
 import 'tailwindcss/tailwind.css';
-import { Loader, Pagination, StructureProps, Table, TableProps } from '../src';
+import { ColumnsProps, Loader, Pagination, Table, TableProps } from '../src';
 
 export default {
   title: 'Example/Table',
@@ -20,15 +20,15 @@ type DefaultDataType = {
   created_at: string;
   updated_at: string;
 };
-const StructureAdminList: StructureProps[] = [
-  { enable: true, field: 'id', titleLanguage: '#' },
-  { enable: true, field: 'fullname', titleLanguage: 'NAME' },
-  { enable: true, field: 'mobile', titleLanguage: 'PHONE' },
-  { enable: true, field: 'email', titleLanguage: 'EMAIL' },
-  { enable: true, field: 'address', titleLanguage: 'ADDRESS' },
-  { enable: true, field: 'status', titleLanguage: 'STATUS' },
-  { enable: true, field: 'created_at', titleLanguage: 'CREATED_AT' },
-  { enable: true, field: 'updated_at', titleLanguage: 'UPDATED_AT' },
+const ColumnsAdminList: ColumnsProps[] = [
+  { enable: true, field: 'id', title: '#' },
+  { enable: true, field: 'fullname', title: 'NAME' },
+  { enable: true, field: 'mobile', title: 'PHONE' },
+  { enable: true, field: 'email', title: 'EMAIL' },
+  { enable: true, field: 'address', title: 'ADDRESS' },
+  { enable: true, field: 'status', title: 'STATUS' },
+  { enable: true, field: 'created_at', title: 'CREATED_AT' },
+  { enable: true, field: 'updated_at', title: 'UPDATED_AT' },
 ];
 const defaultLoader: Loader<DefaultDataType, { keyword: string }> = {
   url: 'api on server, we will mock something',
@@ -112,6 +112,6 @@ const defaultLoader: Loader<DefaultDataType, { keyword: string }> = {
 export const DefaultTable = Template.bind({});
 DefaultTable.args = {
   loader: defaultLoader,
-  structure: StructureAdminList,
+  columns: ColumnsAdminList,
   prefix: 'default',
 };

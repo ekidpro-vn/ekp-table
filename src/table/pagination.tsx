@@ -1,10 +1,10 @@
 import clsx from 'clsx';
-import React, { RefObject, useEffect, useRef, useState } from 'react';
-import { DataPagination, Pagination } from './loader';
+import React, { RefObject, useCallback, useEffect, useRef, useState } from 'react';
 import { PaginationStyle } from './pagination.style';
 import { useFilter } from './table';
+import { PageNumberProps, PageSizeDropdownProps, PaginationUIProps } from './types';
 
-const dataPerpage = [
+const dataPageSize = [
   { value: 5, label: '5' },
   { value: 10, label: '10' },
   { value: 20, label: '20' },
@@ -31,16 +31,9 @@ const renderText = (selected?: boolean, special?: 'first' | 'prev' | 'next' | 'l
   }
 };
 
-const PageNumber: React.FC<{
-  page: number;
-  selected?: boolean;
-  disable?: boolean;
-  special?: 'first' | 'prev' | 'next' | 'last';
-  onClick?: (e: React.MouseEvent<HTMLLIElement, MouseEvent>) => void;
-}> = (props) => {
+const PageNumber: React.FC<PageNumberProps> = (props) => {
   const { page, selected, special, disable, onClick } = props;
   const faName = renderText(selected, special);
-
   return (
     <li
       onClick={onClick}
@@ -75,22 +68,18 @@ const PageNumber: React.FC<{
   );
 };
 
-const PerpageDropdown: React.FC<{
-  pagination: DataPagination;
-  dataPerpage: { value: number; label: string }[];
-  prefix: string;
-}> = (props) => {
+const PageSizeDropdown: React.FC<PageSizeDropdownProps> = (props) => {
   const { currentPage, totalItems, perPage } = props.pagination;
   const setFilter = useFilter(props.prefix);
-  const [perpageCurrent, setPerpageCurrent] = useState<string>('10');
-  const [showSelectPerpage, setShowSelectPerpage] = useState<boolean>(false);
-  const perpageDropdownRef = useRef<HTMLDivElement>(null);
+  const [pageSize, setPagesize] = useState<number>(5);
+  const [showSelectPageSize, setShowSelectPageSize] = useState<boolean>(false);
+  const pageSizeDropdownRef = useRef<HTMLDivElement>(null);
 
   const useOutsideElement = (ref: RefObject<HTMLDivElement>) => {
     useEffect(() => {
       const onClickOutside = (event) => {
         if (ref.current && !ref.current.contains(event.target)) {
-          setShowSelectPerpage(false);
+          setShowSelectPageSize(false);
         }
       };
       document.addEventListener('mousedown', onClickOutside);
@@ -100,46 +89,63 @@ const PerpageDropdown: React.FC<{
     }, [ref]);
   };
 
-  const onSelectedPerpage = (item: { value: number; label: string }) => {
-    setPerpageCurrent(item.label);
-    setFilter({
-      page: `${currentPage}`,
-      size: `${item.value}`,
-    });
-    setShowSelectPerpage(false);
-  };
+  const onSelectPageSize = useCallback(
+    (item: { value: number; label: string }) => {
+      setPagesize(item.value);
+      setFilter({
+        page: `1`,
+        size: `${item.value}`,
+      });
+      setShowSelectPageSize(false);
+    },
+    [setFilter]
+  );
 
-  const start = (currentPage - 1) * perPage + 1;
+  const start = totalItems === 0 ? 0 : (currentPage - 1) * perPage + 1;
   const end = currentPage * perPage > totalItems ? totalItems : currentPage * perPage;
 
-  useOutsideElement(perpageDropdownRef);
+  useOutsideElement(pageSizeDropdownRef);
 
   return (
     <div className="flex items-center sm:ml-3 justify-center mb-5 sm:mb-0">
       <div
         className={`${
-          showSelectPerpage ? 'bg-blue-500' : 'bg-gray-200'
+          showSelectPageSize ? 'bg-blue-500' : 'bg-gray-200'
         } ekp-pagination-dropdown relative cursor-pointer rounded inline-flex sm:flex items-center px-4 h-9 hover:bg-blue-500 duration-300`}
-        onClick={() => setShowSelectPerpage(!showSelectPerpage)}
-        ref={perpageDropdownRef}
+        onClick={() => setShowSelectPageSize(!showSelectPageSize)}
+        ref={pageSizeDropdownRef}
       >
-        <span className={`${showSelectPerpage ? 'text-white' : 'text-gray-500'} ekp-pagination-dropdown-label mr-3`}>
-          {perpageCurrent}
+        <span className={`${showSelectPageSize ? 'text-white' : 'text-gray-500'} ekp-pagination-dropdown-label mr-3`}>
+          {pageSize}
         </span>
-        <i className={`fas fa-chevron-down text-sm ${showSelectPerpage ? 'text-white' : 'text-gray-500'}`}></i>
-        {showSelectPerpage && (
+        <i className={`fas fa-chevron-down text-sm ${showSelectPageSize ? 'text-white' : 'text-gray-500'}`}></i>
+        {showSelectPageSize && (
           <div>
-            <div className="absolute -top-40 left-0 bg-white shadow-lg w-full z-20">
-              {dataPerpage &&
-                dataPerpage.length > 0 &&
-                dataPerpage.map((item) => {
+            <div className="absolute left-0 bg-white overflow-hidden perpage-options w-full z-20">
+              {dataPageSize &&
+                dataPageSize.length > 0 &&
+                dataPageSize.map((item) => {
+                  if (item.value > totalItems) {
+                    return (
+                      <div
+                        key={`perpage_${item.value}`}
+                        className="py-1 px-4 bg-gray-100 cursor-not-allowed border border-t-0 border-l-0 border-r-0 border-gray-100"
+                      >
+                        <span className="text-gray-500">{item.label}</span>
+                      </div>
+                    );
+                  }
                   return (
                     <div
-                      key={JSON.stringify(item.value)}
-                      className={`${perpageCurrent === item.label ? 'bg-gray-100' : ''} py-1 px-4 hover:bg-gray-100`}
-                      onClick={() => onSelectedPerpage(item)}
+                      key={`perpage_${item.value}`}
+                      className={`${
+                        pageSize === item.value ? 'bg-blue-500' : ''
+                      } group py-1 px-4 rounded-sm border border-t-0 border-l-0 border-r-0 border-white hover:bg-blue-500`}
+                      onClick={() => onSelectPageSize(item)}
                     >
-                      <span>{item.label}</span>
+                      <span className={`${pageSize === item.value ? 'text-white' : ''} group-hover:text-white`}>
+                        {item.label}
+                      </span>
                     </div>
                   );
                 })}
@@ -150,13 +156,11 @@ const PerpageDropdown: React.FC<{
       <div className="ml-3">
         <span>{`Showing ${start} - ${end} of ${totalItems}`}</span>
       </div>
-
-      {/* {showSelectPerpage && <div className="w-screen h-screen z-10 opacity-0" onClick={() => setShowSelectPerpage(!showSelectPerpage)}></div>} */}
     </div>
   );
 };
 
-export const PaginationUI: React.FC<{ data: Pagination<unknown> | null; prefix: string }> = ({ data, prefix }) => {
+export const PaginationUI: React.FC<PaginationUIProps> = ({ data, prefix }) => {
   const setFilter = useFilter(prefix);
 
   if (data === null) {
@@ -196,9 +200,9 @@ export const PaginationUI: React.FC<{ data: Pagination<unknown> | null; prefix: 
 
   return (
     <PaginationStyle>
-      <div className="w-full h-full sm:flex justify-between">
+      <div className="w-full h-full sm:flex justify-between" data-testid="pagination">
         <div className="perpage-dropdown w-full sm:w-auto">
-          <PerpageDropdown pagination={pagination} dataPerpage={dataPerpage} prefix={prefix} />
+          <PageSizeDropdown pagination={pagination} dataPageSize={dataPageSize} prefix={prefix} />
         </div>
 
         <div className="page-number w-full sm:w-auto flex justify-center">

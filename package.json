@@ -1,18 +1,19 @@
 {
   "name": "@ekidpro/table",
-  "version": "1.0.14",
+  "version": "1.0.16",
   "main": "./build/index.js",
   "module": "./build/index.es.js",
   "files": [
     "build"
   ],
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "jest --detectOpenHandles",
     "storybook": "start-storybook -p 6006",
     "build-storybook": "build-storybook",
     "build": "rollup -c",
     "predeploy": "npm run build-storybook",
-    "deploy-storybook": "storybook-to-ghpages"
+    "deploy-storybook": "storybook-to-ghpages",
+    "sonar": "node ./sonar.js"
   },
   "author": "Luong Van Lam - lamlv <lamlv@egroup.vn>",
   "license": "ISC",
@@ -55,6 +56,7 @@
     "fork-ts-checker-webpack-plugin": "^6.1.0",
     "gh-pages": "^3.1.0",
     "jest": "^26.6.3",
+    "lodash": "^4.17.21",
     "postcss": "^7.0.35",
     "postcss-cli": "^8.3.1",
     "postcss-loader": "^5.0.0",
@@ -67,7 +69,11 @@
     "react-router": "^5.2.0",
     "react-router-dom": "^5.2.0",
     "rollup-plugin-peer-deps-external": "^2.2.4",
+    "rollup-plugin-sass": "^1.2.2",
     "rollup-plugin-typescript2": "^0.29.0",
+    "sass": "^1.32.8",
+    "sass-loader": "^11.0.1",
+    "sonarqube-scanner": "^2.8.0",
     "styled-components": "^5.2.1",
     "tailwindcss": "npm:@tailwindcss/postcss7-compat@^2.0.2",
     "ts-jest": "^26.5.0",
@@ -83,7 +89,10 @@
     "react-content-loader": "^6.0.1",
     "clsx": "^1.1.1"
   },
-  "dependencies": {},
+  "dependencies": {
+    "axios": "^0.21.1",
+    "msw": "^0.27.1"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/ekidpro-vn/ekp-table.git"

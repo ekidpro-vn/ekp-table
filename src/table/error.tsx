@@ -3,7 +3,7 @@ import ImageError from '../assets/error-image.png';
 
 export const ErrorPage: React.FC = () => {
   return (
-    <div className="mx-auto my-4">
+    <div className="mx-auto my-4" data-testid="error">
       <div className="flex justify-center items-center">
         <img src={ImageError} alt="error" className="w-52 mr-10" />
         <div>

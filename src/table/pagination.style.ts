@@ -39,4 +39,9 @@ export const PaginationStyle = styled.div`
       transition: 0.3s;
     }
   }
+
+  .perpage-options {
+    box-shadow: 0px 1px 5px -2px rgba(0, 0, 0, 0.75);
+    top: -165px;
+  }
 `;
