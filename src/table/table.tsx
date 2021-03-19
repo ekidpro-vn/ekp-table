@@ -1,6 +1,5 @@
 import queryString from 'query-string';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
-import { useHistory } from 'react-router-dom';
 import { LoadingIcon } from '../assets/loading';
 import ImageNoData from '../assets/no-data.png';
 import { ErrorPage } from './error';
@@ -8,6 +7,7 @@ import { FilterTable } from './filter';
 import { Pagination } from './loader';
 import { PaginationUI } from './pagination';
 import { BodyProps, FilterProps, HeaderProps, TableProps } from './types';
+import { add, remove } from '../store/loader-inventory';
 
 const RenderHeader: React.FC<HeaderProps> = (props) => {
   const { structure } = props;
@@ -116,6 +116,15 @@ export const Table: React.FC<TableProps> = (props) => {
 
   useEffect(getDataFromRemoteServer);
 
+  // Add fetcher function to local store
+  useEffect(() => {
+    add(prefix, getDataFromRemoteServer);
+
+    return () => {
+      remove(prefix, getDataFromRemoteServer);
+    };
+  }, [prefix, getDataFromRemoteServer]);
+
   if (err !== null) {
     return Wrapper ? <Wrapper children={<ErrorPage />} /> : <ErrorPage />;
   }
@@ -152,26 +161,6 @@ export const Table: React.FC<TableProps> = (props) => {
   );
 
   return Wrapper ? <Wrapper children={tmp} /> : tmp;
-};
-
-export const useFilter = (prefix: string): ((params: Record<string, string | undefined>) => void) => {
-  const history = useHistory();
-
-  return useCallback(
-    (params: Record<string, string | undefined>) => {
-      const parsed = queryString.parse(window.location.search);
-
-      for (const [key, value] of Object.entries(params)) {
-        parsed[`${prefix}_${key}`] = value || null;
-      }
-
-      history.push({
-        pathname: window.location.pathname,
-        search: queryString.stringify(parsed),
-      });
-    },
-    [history, prefix]
-  );
 };
 
 export const Filter: React.FC<FilterProps> = (props) => {
