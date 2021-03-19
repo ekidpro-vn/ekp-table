@@ -67,8 +67,8 @@ const RenderBody: React.FC<BodyProps> = (props) => {
 const MemoizedHeader = React.memo(RenderHeader);
 const MemoizedBody = React.memo(RenderBody);
 
-export const Table: React.FC<TableProps> = (props) => {
-  const { structure, prefix, onRefresh, Wrapper } = props;
+export const Table = React.memo((props: TableProps) => {
+  const { structure, prefix, Wrapper } = props;
   const loader = useRef(props.loader);
   const [data, setData] = useState<Pagination<unknown> | null>(null);
   const [err, setError] = useState<Error | null>(null);
@@ -114,7 +114,9 @@ export const Table: React.FC<TableProps> = (props) => {
       });
   }, [loader, prefix]);
 
-  useEffect(getDataFromRemoteServer);
+  useEffect(() => {
+    getDataFromRemoteServer();
+  }, [getDataFromRemoteServer]);
 
   // Add fetcher function to local store
   useEffect(() => {
@@ -161,7 +163,7 @@ export const Table: React.FC<TableProps> = (props) => {
   );
 
   return Wrapper ? <Wrapper children={tmp} /> : tmp;
-};
+});
 
 export const Filter: React.FC<FilterProps> = (props) => {
   const { dataFilter } = props;

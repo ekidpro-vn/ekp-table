@@ -2,7 +2,7 @@ import clsx from 'clsx';
 import React, { RefObject, useEffect, useRef, useState } from 'react';
 import { DataPagination, Pagination } from './loader';
 import { PaginationStyle } from './pagination.style';
-import { useFilter } from './table';
+import { useFilter } from '../hooks';
 
 const dataPerpage = [
   { value: 5, label: '5' },
