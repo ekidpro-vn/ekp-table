@@ -68,7 +68,7 @@ const MemoizedHeader = React.memo(RenderHeader);
 const MemoizedBody = React.memo(RenderBody);
 
 export const Table: React.FC<TableProps> = (props) => {
-  const { structure, prefix, onRefresh, Wrapper, titleWrapper, toolbarWrapper } = props;
+  const { structure, prefix, onRefresh, Wrapper } = props;
   const loader = useRef(props.loader);
   const [data, setData] = useState<Pagination<unknown> | null>(null);
   const [err, setError] = useState<Error | null>(null);
@@ -117,11 +117,7 @@ export const Table: React.FC<TableProps> = (props) => {
   useEffect(getDataFromRemoteServer);
 
   if (err !== null) {
-    return Wrapper ? (
-      <Wrapper titleWrapper={titleWrapper} toolbarWrapper={toolbarWrapper} children={<ErrorPage />} />
-    ) : (
-      <ErrorPage />
-    );
+    return Wrapper ? <Wrapper children={<ErrorPage />} /> : <ErrorPage />;
   }
 
   if (data === null && err === null) {
@@ -134,7 +130,7 @@ export const Table: React.FC<TableProps> = (props) => {
       </div>
     );
 
-    return Wrapper ? <Wrapper titleWrapper={titleWrapper} toolbarWrapper={toolbarWrapper} children={tmp} /> : tmp;
+    return Wrapper ? <Wrapper children={tmp} /> : tmp;
   }
 
   const tmp = (
@@ -155,7 +151,7 @@ export const Table: React.FC<TableProps> = (props) => {
     </div>
   );
 
-  return Wrapper ? <Wrapper titleWrapper={titleWrapper} toolbarWrapper={toolbarWrapper} children={tmp} /> : tmp;
+  return Wrapper ? <Wrapper children={tmp} /> : tmp;
 };
 
 export const useFilter = (prefix: string): ((params: Record<string, string | undefined>) => void) => {
