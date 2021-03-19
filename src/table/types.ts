@@ -10,17 +10,12 @@ export interface FilterProps {
   dataFilter: { FilterComponent: React.ReactElement }[];
 }
 
-export interface TableProps extends WrapperProps {
+export interface TableProps {
   prefix?: string;
   loader: Loader<any, Record<string, unknown>>;
   structure: StructureProps[];
   onRefresh?: () => void;
-  Wrapper?: React.FC<WrapperProps>;
-}
-
-export interface WrapperProps {
-  titleWrapper?: string | React.ReactElement;
-  toolbarWrapper?: React.ReactElement;
+  Wrapper?: React.FC<Record<string, unknown>>;
 }
 
 export interface HeaderProps {
