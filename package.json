@@ -12,7 +12,8 @@
     "build-storybook": "build-storybook",
     "build": "rollup -c",
     "predeploy": "npm run build-storybook",
-    "deploy-storybook": "storybook-to-ghpages"
+    "deploy-storybook": "storybook-to-ghpages",
+    "sonar": "node ./sonar.js"
   },
   "author": "Luong Van Lam - lamlv <lamlv@egroup.vn>",
   "license": "ISC",
@@ -72,6 +73,7 @@
     "rollup-plugin-typescript2": "^0.29.0",
     "sass": "^1.32.8",
     "sass-loader": "^11.0.1",
+    "sonarqube-scanner": "^2.8.0",
     "styled-components": "^5.2.1",
     "tailwindcss": "npm:@tailwindcss/postcss7-compat@^2.0.2",
     "ts-jest": "^26.5.0",
