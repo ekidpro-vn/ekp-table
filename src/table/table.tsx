@@ -5,22 +5,21 @@ import { LoadingIcon } from '../assets/loading';
 import ImageNoData from '../assets/no-data.png';
 import { ErrorPage } from './error';
 import { FilterTable } from './filter';
-import { Pagination } from './loader';
 import { PaginationUI } from './pagination';
-import { BodyProps, FilterProps, HeaderProps, TableProps } from './types';
+import { BodyProps, FilterProps, HeaderProps, Pagination, TableProps } from './types';
 
 const RenderHeader: React.FC<HeaderProps> = (props) => {
-  const { structure } = props;
+  const { columns } = props;
   return (
     <tr className="bg-gray-800 text-left rounded">
-      {structure &&
-        structure.map((item) => {
+      {columns &&
+        columns.map((item) => {
           if (!item.enable) {
             return null;
           }
           return (
-            <th className="text-gray-900 bg-gray-50 font-extrabold p-5" key={item.titleLanguage}>
-              {item.titleLanguage}
+            <th className="text-gray-900 bg-gray-50 font-extrabold p-5" key={`title_${item.title}`}>
+              {item.title}
             </th>
           );
         })}
@@ -29,10 +28,10 @@ const RenderHeader: React.FC<HeaderProps> = (props) => {
 };
 
 const RenderBody: React.FC<BodyProps> = (props) => {
-  const { data, structure, loader } = props;
+  const { data, columns, loader } = props;
   if (!data || !Array.isArray(data) || data.length === 0) {
     return (
-      <td colSpan={structure.length} className="bg-white w-full" data-testid="empty">
+      <td colSpan={columns.length} className="bg-white w-full" data-testid="empty">
         <img src={ImageNoData} alt="no data" className="block w-80 mx-auto" />
       </td>
     );
@@ -47,7 +46,7 @@ const RenderBody: React.FC<BodyProps> = (props) => {
             className="bg-white border-gray-200 text-left py-3"
             style={{ borderTopWidth: 1 }}
           >
-            {structure.map((item2) => {
+            {columns.map((item2) => {
               if (!item2.enable) {
                 return null;
               }
@@ -68,7 +67,7 @@ const MemoizedHeader = React.memo(RenderHeader);
 const MemoizedBody = React.memo(RenderBody);
 
 export const Table: React.FC<TableProps> = (props) => {
-  const { structure, prefix, onRefresh, Wrapper } = props;
+  const { columns, prefix, onRefresh, Wrapper } = props;
   const loader = useRef(props.loader);
   const [data, setData] = useState<Pagination<unknown> | null>(null);
   const [err, setError] = useState<Error | null>(null);
@@ -138,10 +137,10 @@ export const Table: React.FC<TableProps> = (props) => {
       <div className="overflow-x-scroll">
         <table className="w-full table-auto mb-4">
           <thead>
-            <MemoizedHeader structure={structure} />
+            <MemoizedHeader columns={columns} />
           </thead>
           <tbody className="bg-gray-200 w-full">
-            <MemoizedBody data={data?.data} structure={structure} loader={loader.current} />
+            <MemoizedBody data={data?.data} columns={columns} loader={loader.current} />
           </tbody>
         </table>
       </div>

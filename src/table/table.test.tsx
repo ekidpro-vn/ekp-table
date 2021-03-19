@@ -5,9 +5,8 @@ import { get } from 'lodash';
 import { rest } from 'msw';
 import { setupServer } from 'msw/node';
 import React from 'react';
-import { Loader, Pagination } from './loader';
 import { Filter, Table } from './table';
-import { StructureProps } from './types';
+import { ColumnsProps, Loader, Pagination } from './types';
 
 interface UserFilter {
   type?: string;
@@ -34,15 +33,15 @@ export interface UserInfo {
   username: string;
 }
 
-export const StructureAdminList: StructureProps[] = [
-  { enable: true, field: 'uid', titleLanguage: '#' },
-  { enable: true, field: 'fullname', titleLanguage: 'INFO' },
-  { enable: true, field: 'mobile', titleLanguage: 'PHONE' },
-  { enable: true, field: 'email', titleLanguage: 'EMAIL' },
-  { enable: true, field: 'status', titleLanguage: 'STATUS' },
-  { enable: true, field: 'created_at', titleLanguage: 'CREATED_AT' },
-  { enable: true, field: 'updated_at', titleLanguage: 'UPDATED_AT' },
-  { enable: true, field: 'action', titleLanguage: 'ACTION' },
+export const ColumnsAdminList: ColumnsProps[] = [
+  { enable: true, field: 'uid', title: '#' },
+  { enable: true, field: 'fullname', title: 'INFO' },
+  { enable: true, field: 'mobile', title: 'PHONE' },
+  { enable: true, field: 'email', title: 'EMAIL' },
+  { enable: true, field: 'status', title: 'STATUS' },
+  { enable: true, field: 'created_at', title: 'CREATED_AT' },
+  { enable: true, field: 'updated_at', title: 'UPDATED_AT' },
+  { enable: true, field: 'action', title: 'ACTION' },
 ];
 
 const server = setupServer(
@@ -226,7 +225,7 @@ afterAll(() => server.close());
 
 test('1. Exist table, pagination', async () => {
   await act(async () => {
-    const { findByTestId } = render(<Table loader={UserLoader} structure={StructureAdminList} />);
+    const { findByTestId } = render(<Table loader={UserLoader} columns={ColumnsAdminList} />);
     const table = await findByTestId('table');
     const pagination = await findByTestId('pagination');
 
@@ -240,7 +239,7 @@ test('2. Exist wrapper', async () => {
     const Wrapper: React.FC = (props) => {
       return <div data-testid="wrapper">{props.children}</div>;
     };
-    const { findByTestId } = render(<Table loader={UserLoader} structure={StructureAdminList} Wrapper={Wrapper} />);
+    const { findByTestId } = render(<Table loader={UserLoader} columns={ColumnsAdminList} Wrapper={Wrapper} />);
     const wrapper = await findByTestId('wrapper');
     const table = await findByTestId('table');
 
@@ -255,7 +254,7 @@ test('3. Exist filter data', async () => {
     const { findByTestId } = render(
       <>
         <Filter dataFilter={dataFilter} />
-        <Table loader={UserLoader} structure={StructureAdminList} />
+        <Table loader={UserLoader} columns={ColumnsAdminList} />
       </>
     );
     const filter = await findByTestId('filter');
@@ -272,7 +271,7 @@ test('4. Empty data', async () => {
   await act(async () => {
     const configLoader = UserLoader;
     configLoader.url = '/user/empty';
-    const { findByTestId } = render(<Table loader={configLoader} structure={StructureAdminList} />);
+    const { findByTestId } = render(<Table loader={configLoader} columns={ColumnsAdminList} />);
     const empty = await findByTestId('empty');
     const table = await findByTestId('table');
 
@@ -285,7 +284,7 @@ test('5. API error', async () => {
   await act(async () => {
     const configLoader = UserLoader;
     configLoader.url = '/user/error';
-    const { findByTestId } = render(<Table loader={configLoader} structure={StructureAdminList} />);
+    const { findByTestId } = render(<Table loader={configLoader} columns={ColumnsAdminList} />);
     const error = await findByTestId('error');
 
     expect(error).toBeTruthy();
@@ -296,7 +295,7 @@ test('6. Exist loading', async () => {
   await act(async () => {
     const configLoader = UserLoader;
     configLoader.url = '/user/loading';
-    const { findByTestId } = render(<Table loader={configLoader} structure={StructureAdminList} />);
+    const { findByTestId } = render(<Table loader={configLoader} columns={ColumnsAdminList} />);
     const loading = await findByTestId('loading');
 
     expect(loading).toBeTruthy();
@@ -307,7 +306,7 @@ test('7. API error html', async () => {
   await act(async () => {
     const configLoader = UserLoader;
     configLoader.url = '/user/html';
-    const { findByTestId } = render(<Table loader={configLoader} structure={StructureAdminList} />);
+    const { findByTestId } = render(<Table loader={configLoader} columns={ColumnsAdminList} />);
     const error = await findByTestId('error');
 
     expect(error).toBeTruthy();
