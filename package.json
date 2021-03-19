@@ -69,7 +69,6 @@
     "react-router": "^5.2.0",
     "react-router-dom": "^5.2.0",
     "rollup-plugin-peer-deps-external": "^2.2.4",
-    "rollup-plugin-sass": "^1.2.2",
     "rollup-plugin-typescript2": "^0.29.0",
     "sass": "^1.32.8",
     "sass-loader": "^11.0.1",

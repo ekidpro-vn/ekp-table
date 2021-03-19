@@ -2,11 +2,11 @@ import queryString from 'query-string';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { LoadingIcon } from '../assets/loading';
 import ImageNoData from '../assets/no-data.png';
+import { add, remove } from '../store/loader-inventory';
 import { ErrorPage } from './error';
 import { FilterTable } from './filter';
 import { PaginationUI } from './pagination';
 import { BodyProps, FilterProps, HeaderProps, Pagination, TableProps } from './types';
-import { add, remove } from '../store/loader-inventory';
 
 const RenderHeader: React.FC<HeaderProps> = (props) => {
   const { columns } = props;
@@ -71,8 +71,10 @@ export const Table = React.memo((props: TableProps) => {
   const loader = useRef(props.loader);
   const [data, setData] = useState<Pagination<unknown> | null>(null);
   const [err, setError] = useState<Error | null>(null);
+  const [loading, setLoading] = useState<boolean>(false);
 
   const getDataFromRemoteServer = useCallback(() => {
+    setLoading(true);
     const { url, fetch } = loader.current;
     if (typeof url === 'undefined' || url === null) {
       throw new Error(`Invalid Url`);
@@ -107,9 +109,11 @@ export const Table = React.memo((props: TableProps) => {
     })
       .then((result) => {
         setData(result);
+        setLoading(false);
       })
       .catch((err: Error) => {
         setError(err);
+        setLoading(false);
       });
   }, [loader, prefix]);
 
@@ -130,7 +134,7 @@ export const Table = React.memo((props: TableProps) => {
     return Wrapper ? <Wrapper children={<ErrorPage />} /> : <ErrorPage />;
   }
 
-  if (data === null && err === null) {
+  if ((data === null && err === null) || loading) {
     const tmp = (
       <div className="flex items-center justify-center mt-32 min-h-96 bg-white pt-10 pb-20" data-testid="loading">
         <div className="flex shadow-md rounded-full items-center px-4 overflow-hidden">
