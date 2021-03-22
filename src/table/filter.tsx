@@ -1,6 +1,6 @@
 import clsx from 'clsx';
 import React, { useCallback, useState } from 'react';
-import '../styles/filter.css';
+import { FilterStyle } from '../styles/filter.style';
 
 interface FilterProps {
   dataFilter: DataFilterProps[];
@@ -24,7 +24,7 @@ export const FilterTable: React.FC<FilterProps> = (props) => {
   }, [showFilterMobile]);
 
   return (
-    <div>
+    <FilterStyle>
       {/* Mobile */}
       <div className="mb-5 sm:hidden" data-testid="filter-mobile">
         <div
@@ -75,6 +75,6 @@ export const FilterTable: React.FC<FilterProps> = (props) => {
           );
         })}
       </div>
-    </div>
+    </FilterStyle>
   );
 };

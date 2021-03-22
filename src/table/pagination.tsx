@@ -1,7 +1,7 @@
 import clsx from 'clsx';
 import React, { RefObject, useCallback, useEffect, useRef, useState } from 'react';
-import { PaginationStyle } from './pagination.style';
-import { useFilter } from './table';
+import { useFilter } from '../hooks';
+import { PaginationStyle } from '../styles/pagination.style';
 import { PageNumberProps, PageSizeDropdownProps, PaginationUIProps } from './types';
 
 const dataPageSize = [

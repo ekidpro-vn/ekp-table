@@ -13,7 +13,6 @@ export interface TableProps {
   prefix?: string;
   loader: Loader<any, Record<string, unknown>>;
   columns: ColumnsProps[];
-  onRefresh?: () => void;
   Wrapper?: React.FC<Record<string, unknown>>;
 }
 

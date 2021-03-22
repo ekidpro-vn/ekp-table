@@ -1,8 +1,8 @@
 import queryString from 'query-string';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
-import { useHistory } from 'react-router-dom';
 import { LoadingIcon } from '../assets/loading';
 import ImageNoData from '../assets/no-data.png';
+import { add, remove } from '../store/loader-inventory';
 import { ErrorPage } from './error';
 import { FilterTable } from './filter';
 import { PaginationUI } from './pagination';
@@ -66,13 +66,15 @@ const RenderBody: React.FC<BodyProps> = (props) => {
 const MemoizedHeader = React.memo(RenderHeader);
 const MemoizedBody = React.memo(RenderBody);
 
-export const Table: React.FC<TableProps> = (props) => {
-  const { columns, prefix, onRefresh, Wrapper } = props;
+export const Table = React.memo((props: TableProps) => {
+  const { columns, prefix, Wrapper } = props;
   const loader = useRef(props.loader);
   const [data, setData] = useState<Pagination<unknown> | null>(null);
   const [err, setError] = useState<Error | null>(null);
+  const [loading, setLoading] = useState<boolean>(false);
 
   const getDataFromRemoteServer = useCallback(() => {
+    setLoading(true);
     const { url, fetch } = loader.current;
     if (typeof url === 'undefined' || url === null) {
       throw new Error(`Invalid Url`);
@@ -107,19 +109,32 @@ export const Table: React.FC<TableProps> = (props) => {
     })
       .then((result) => {
         setData(result);
+        setLoading(false);
       })
       .catch((err: Error) => {
         setError(err);
+        setLoading(false);
       });
   }, [loader, prefix]);
 
-  useEffect(getDataFromRemoteServer);
+  useEffect(() => {
+    getDataFromRemoteServer();
+  }, [getDataFromRemoteServer]);
+
+  // Add fetcher function to local store
+  useEffect(() => {
+    add(prefix, getDataFromRemoteServer);
+
+    return () => {
+      remove(prefix, getDataFromRemoteServer);
+    };
+  }, [prefix, getDataFromRemoteServer]);
 
   if (err !== null) {
     return Wrapper ? <Wrapper children={<ErrorPage />} /> : <ErrorPage />;
   }
 
-  if (data === null && err === null) {
+  if ((data === null && err === null) || loading) {
     const tmp = (
       <div className="flex items-center justify-center mt-32 min-h-96 bg-white pt-10 pb-20" data-testid="loading">
         <div className="flex shadow-md rounded-full items-center px-4 overflow-hidden">
@@ -151,27 +166,7 @@ export const Table: React.FC<TableProps> = (props) => {
   );
 
   return Wrapper ? <Wrapper children={tmp} /> : tmp;
-};
-
-export const useFilter = (prefix: string): ((params: Record<string, string | undefined>) => void) => {
-  const history = useHistory();
-
-  return useCallback(
-    (params: Record<string, string | undefined>) => {
-      const parsed = queryString.parse(window.location.search);
-
-      for (const [key, value] of Object.entries(params)) {
-        parsed[`${prefix}_${key}`] = value || null;
-      }
-
-      history.push({
-        pathname: window.location.pathname,
-        search: queryString.stringify(parsed),
-      });
-    },
-    [history, prefix]
-  );
-};
+});
 
 export const Filter: React.FC<FilterProps> = (props) => {
   const { dataFilter } = props;
