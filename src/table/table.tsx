@@ -1,5 +1,6 @@
 import queryString from 'query-string';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
+import { useLocation } from 'react-router-dom';
 import { LoadingIcon } from '../assets/loading';
 import ImageNoData from '../assets/no-data.png';
 import { add, remove } from '../store/loader-inventory';
@@ -72,6 +73,7 @@ export const Table = React.memo((props: TableProps) => {
   const [data, setData] = useState<Pagination<unknown> | null>(null);
   const [err, setError] = useState<Error | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
+  const location = useLocation();
 
   const getDataFromRemoteServer = useCallback(() => {
     setLoading(true);
@@ -85,7 +87,7 @@ export const Table = React.memo((props: TableProps) => {
       pf = '';
     }
 
-    const parsed = queryString.parse(window.location.search);
+    const parsed = queryString.parse(location.search);
 
     const filter: Record<string, unknown> = {};
     for (const [key, value] of Object.entries(parsed)) {
@@ -115,7 +117,7 @@ export const Table = React.memo((props: TableProps) => {
         setError(err);
         setLoading(false);
       });
-  }, [loader, prefix]);
+  }, [loader, prefix, location]);
 
   useEffect(() => {
     getDataFromRemoteServer();

@@ -1,6 +1,6 @@
 {
   "name": "@ekidpro/table",
-  "version": "1.0.16",
+  "version": "1.0.17",
   "main": "./build/index.js",
   "module": "./build/index.es.js",
   "files": [
