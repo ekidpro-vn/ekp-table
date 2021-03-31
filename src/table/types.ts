@@ -1,8 +1,13 @@
 // Table
+
+export interface SortIconProps {
+  field: string;
+}
 export interface ColumnsProps {
   enable: boolean;
   field: string;
-  title: string;
+  title: string | React.ReactElement | React.FC;
+  canSort?: boolean;
 }
 
 export interface FilterProps {
@@ -14,10 +19,23 @@ export interface TableProps {
   loader: Loader<any, Record<string, unknown>>;
   columns: ColumnsProps[];
   Wrapper?: React.FC<Record<string, unknown>>;
+  sort?: {
+    upValue?: string;
+    downValue?: string;
+    seperator?: string;
+    param?: string;
+  };
 }
 
 export interface HeaderProps {
   columns: ColumnsProps[];
+  prefix?: string;
+  sort?: {
+    upValue?: string;
+    downValue?: string;
+    seperator?: string;
+    param?: string;
+  };
 }
 
 export interface BodyProps {

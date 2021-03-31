@@ -42,6 +42,15 @@ export const PaginationStyle = styled.div`
 
   .perpage-options {
     box-shadow: 0px 1px 5px -2px rgba(0, 0, 0, 0.75);
-    top: -165px;
+    top: -465%;
+  }
+
+  .page-number-input::-webkit-outer-spin-button,
+  .page-number-input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+  .page-number-input {
+    -moz-appearance: textfield;
   }
 `;

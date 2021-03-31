@@ -4,13 +4,9 @@ import { useFilter } from '../hooks';
 import { PaginationStyle } from '../styles/pagination.style';
 import { PageNumberProps, PageSizeDropdownProps, PaginationUIProps } from './types';
 
-const dataPageSize = [
-  { value: 5, label: '5' },
-  { value: 10, label: '10' },
-  { value: 20, label: '20' },
-  { value: 50, label: '50' },
-  { value: 100, label: '100' },
-];
+const dataPageSize: { value: number; label: string }[] = [5, 10, 20, 50, 100].map((item) => {
+  return { value: item, label: `${item}` };
+});
 
 const renderText = (selected?: boolean, special?: 'first' | 'prev' | 'next' | 'last') => {
   switch (special) {
@@ -71,7 +67,7 @@ const PageNumber: React.FC<PageNumberProps> = (props) => {
 const PageSizeDropdown: React.FC<PageSizeDropdownProps> = (props) => {
   const { currentPage, totalItems, perPage } = props.pagination;
   const setFilter = useFilter(props.prefix);
-  const [pageSize, setPagesize] = useState<number>(5);
+  const [pageSize, setPageSize] = useState<number>(perPage);
   const [showSelectPageSize, setShowSelectPageSize] = useState<boolean>(false);
   const pageSizeDropdownRef = useRef<HTMLDivElement>(null);
 
@@ -91,7 +87,7 @@ const PageSizeDropdown: React.FC<PageSizeDropdownProps> = (props) => {
 
   const onSelectPageSize = useCallback(
     (item: { value: number; label: string }) => {
-      setPagesize(item.value);
+      setPageSize(item.value);
       setFilter({
         page: `1`,
         size: `${item.value}`,
@@ -162,6 +158,7 @@ const PageSizeDropdown: React.FC<PageSizeDropdownProps> = (props) => {
 
 export const PaginationUI: React.FC<PaginationUIProps> = ({ data, prefix }) => {
   const setFilter = useFilter(prefix);
+  const [inputNumber, setInputNumber] = useState<string>('');
 
   if (data === null) {
     return null;
@@ -190,6 +187,14 @@ export const PaginationUI: React.FC<PaginationUIProps> = ({ data, prefix }) => {
     nums.push(idx);
   }
 
+  const onSubmitPageNumber = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    setFilter({
+      page: inputNumber,
+      size: `${perPage}`,
+    });
+  };
+
   const onSelectPage = (page: number, disabled: boolean) => {
     !disabled &&
       setFilter({
@@ -200,7 +205,7 @@ export const PaginationUI: React.FC<PaginationUIProps> = ({ data, prefix }) => {
 
   return (
     <PaginationStyle>
-      <div className="w-full h-full sm:flex justify-between" data-testid="pagination">
+      <div className="w-full h-full sm:flex sm:justify-between" data-testid="pagination">
         <div className="perpage-dropdown w-full sm:w-auto">
           <PageSizeDropdown pagination={pagination} dataPageSize={dataPageSize} prefix={prefix} />
         </div>
@@ -226,12 +231,22 @@ export const PaginationUI: React.FC<PaginationUIProps> = ({ data, prefix }) => {
               onClick={() => onSelectPage(idx, false)}
             />
           ))}
+          <span className="pt-3 block mx-1.5 text-lg">. . .</span>
+          <form onSubmit={(e) => onSubmitPageNumber(e)}>
+            <input
+              type="number"
+              className="page-number-input overflow-hidden rounded px-1 w-9 h-full border border-gray-300 hover:border-gray-400 focus:outline-none focus:border-gray-400 duration-300"
+              value={inputNumber}
+              onChange={(e) => setInputNumber(e.target.value)}
+            />
+          </form>
           <PageNumber
             page={currentPage + 1}
             special="next"
             disable={currentPage >= totalPages}
             onClick={() => onSelectPage(currentPage + 1, currentPage >= totalPages)}
           />
+
           <PageNumber
             page={totalPages}
             special="last"

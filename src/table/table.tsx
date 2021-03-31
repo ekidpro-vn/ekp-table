@@ -1,16 +1,70 @@
 import queryString from 'query-string';
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import React, { memo, useCallback, useEffect, useRef, useState } from 'react';
 import { useLocation } from 'react-router-dom';
+import IconArrowDown from '../assets/down-arrow.png';
 import { LoadingIcon } from '../assets/loading';
 import ImageNoData from '../assets/no-data.png';
+import IconArrowUp from '../assets/up-arrow.png';
+import { useFilter } from '../hooks/use-filter';
 import { add, remove } from '../store/loader-inventory';
 import { ErrorPage } from './error';
 import { FilterTable } from './filter';
 import { PaginationUI } from './pagination';
-import { BodyProps, FilterProps, HeaderProps, Pagination, TableProps } from './types';
+import { BodyProps, FilterProps, HeaderProps, Pagination, SortIconProps, TableProps } from './types';
 
 const RenderHeader: React.FC<HeaderProps> = (props) => {
-  const { columns } = props;
+  const { columns, sort } = props;
+  const prefix = props.prefix ?? 'default';
+  const setFilter = useFilter(prefix);
+
+  const upValueSort = sort?.upValue ?? 'ASC';
+  const downValueSort = sort?.downValue ?? 'DESC';
+  const paramSort = sort?.param ?? 'sort';
+  const separatorSort = sort?.seperator ?? '|';
+  const location = useLocation();
+  const parsed = queryString.parse(location.search);
+  const sortingURL = parsed[`${prefix}_${paramSort}`] as string | undefined;
+  const [currentField, currentValue] = sortingURL ? sortingURL.split(separatorSort) : [];
+
+  const RenderSortIcon: React.FC<SortIconProps> = (props) => {
+    const { field } = props;
+    if (field === currentField) {
+      if (currentValue === upValueSort) {
+        return <img src={IconArrowUp} alt="sort" className="block ml-2 w-3 h-3 cursor-pointer" />;
+      }
+      if (currentValue === downValueSort) {
+        return <img src={IconArrowDown} alt="sort" className="block ml-2 w-3 h-3 cursor-pointer" />;
+      }
+    }
+    return null;
+  };
+
+  const MemoSortIcon = memo(RenderSortIcon);
+
+  const onFilterSort = (field: string) => {
+    let nextValue = '';
+    let nextField = `${field}${separatorSort}`;
+
+    if (currentField === field) {
+      if (!currentValue) {
+        nextValue = upValueSort;
+      }
+      if (currentValue === upValueSort) {
+        nextValue = downValueSort;
+      }
+      if (currentValue === downValueSort) {
+        nextField = '';
+        nextValue = '';
+      }
+    } else {
+      nextValue = upValueSort;
+    }
+
+    const objSort: Record<string, string> = {};
+    objSort[`${paramSort}`] = `${nextField}${nextValue}` || '';
+    setFilter(objSort);
+  };
+
   return (
     <tr className="bg-gray-800 text-left rounded">
       {columns &&
@@ -19,8 +73,15 @@ const RenderHeader: React.FC<HeaderProps> = (props) => {
             return null;
           }
           return (
-            <th className="text-gray-900 bg-gray-50 font-extrabold p-5" key={`title_${item.title}`}>
-              {item.title}
+            <th
+              className={`${item.canSort && 'cursor-pointer duration-300 hover:text-blue-500'} bg-gray-50 p-5`}
+              key={`title_${item.title}`}
+              onClick={item.canSort ? () => onFilterSort(item.field) : undefined}
+            >
+              <div className="flex items-center">
+                <span className="block text-gray-900 font-extrabold">{item.title}</span>
+                {item.canSort && <MemoSortIcon field={item.field} />}
+              </div>
             </th>
           );
         })}
@@ -64,11 +125,11 @@ const RenderBody: React.FC<BodyProps> = (props) => {
   );
 };
 
-const MemoizedHeader = React.memo(RenderHeader);
-const MemoizedBody = React.memo(RenderBody);
+const MemoizedHeader = memo(RenderHeader);
+const MemoizedBody = memo(RenderBody);
 
-export const Table = React.memo((props: TableProps) => {
-  const { columns, prefix, Wrapper } = props;
+export const Table = memo((props: TableProps) => {
+  const { columns, prefix, Wrapper, sort } = props;
   const loader = useRef(props.loader);
   const [data, setData] = useState<Pagination<unknown> | null>(null);
   const [err, setError] = useState<Error | null>(null);
@@ -83,7 +144,7 @@ export const Table = React.memo((props: TableProps) => {
     }
 
     let pf = prefix ?? '';
-    if (prefix && /^[a-zA-Z]+$/g.test(prefix) === false) {
+    if (prefix && /^[-a-zA-Z_]+$/g.test(prefix) === false) {
       pf = '';
     }
 
@@ -154,7 +215,7 @@ export const Table = React.memo((props: TableProps) => {
       <div className="overflow-x-scroll">
         <table className="w-full table-auto mb-4">
           <thead>
-            <MemoizedHeader columns={columns} />
+            <MemoizedHeader columns={columns} prefix={prefix} sort={sort} />
           </thead>
           <tbody className="bg-gray-200 w-full">
             <MemoizedBody data={data?.data} columns={columns} loader={loader.current} />
