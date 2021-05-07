@@ -1,6 +1,6 @@
+import queryString from 'query-string';
 import { useCallback } from 'react';
 import { useHistory } from 'react-router-dom';
-import queryString from 'query-string';
 
 export const useFilter = (prefix: string): ((params: Record<string, string | undefined>) => void) => {
   const history = useHistory();
