@@ -11,6 +11,8 @@ export interface ColumnsProps {
 }
 
 export interface FilterProps {
+  gridClassName?: string;
+  colClassName?: string;
   dataFilter: { FilterComponent: React.ReactElement }[];
 }
 

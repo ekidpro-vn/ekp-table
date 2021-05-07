@@ -16,7 +16,6 @@ const RenderHeader: React.FC<HeaderProps> = (props) => {
   const { columns, sort } = props;
   const prefix = props.prefix ?? 'default';
   const setFilter = useFilter(prefix);
-
   const upValueSort = sort?.upValue ?? 'ASC';
   const downValueSort = sort?.downValue ?? 'DESC';
   const paramSort = sort?.param ?? 'sort';
@@ -232,6 +231,6 @@ export const Table = memo((props: TableProps) => {
 });
 
 export const Filter: React.FC<FilterProps> = (props) => {
-  const { dataFilter } = props;
-  return <FilterTable dataFilter={dataFilter} />;
+  const { dataFilter, colClassName, gridClassName } = props;
+  return <FilterTable dataFilter={dataFilter} colClassName={colClassName} gridClassName={gridClassName} />;
 };

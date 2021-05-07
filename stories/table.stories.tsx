@@ -2,6 +2,7 @@ import { Meta, Story } from '@storybook/react/types-6-0';
 import React from 'react';
 import 'tailwindcss/tailwind.css';
 import { ColumnsProps, Loader, Pagination, Table, TableProps } from '../src';
+// import { Filter } from '../src/table/table';
 
 export default {
   title: 'Example/Table',
@@ -11,7 +12,13 @@ export default {
 
 const Template: Story<TableProps> = (args) => (
   <div>
-    {/* <Filter dataFilter={[{ FilterComponent: <div>ducnh</div> }]} /> */}
+    {/* <Filter
+      dataFilter={[
+        { FilterComponent: <div>ducnh</div> },
+        { FilterComponent: <div>ducnh</div> },
+        { FilterComponent: <div>ducnh</div> },
+      ]}
+    /> */}
     <Table {...args} />
   </div>
 );

@@ -1,17 +1,10 @@
 import clsx from 'clsx';
 import React, { useCallback, useState } from 'react';
 import { FilterStyle } from '../styles/filter.style';
-
-interface FilterProps {
-  dataFilter: DataFilterProps[];
-}
-
-export interface DataFilterProps {
-  FilterComponent: React.ReactElement;
-}
+import { FilterProps } from './types';
 
 export const FilterTable: React.FC<FilterProps> = (props) => {
-  const { dataFilter } = props;
+  const { dataFilter, gridClassName, colClassName } = props;
   const [showFilterMobile, setShowFilterMobile] = useState<'load' | 'show' | 'hidden'>('load');
 
   const onToggleFilter = useCallback(() => {
@@ -66,10 +59,13 @@ export const FilterTable: React.FC<FilterProps> = (props) => {
       </div>
       {/* End mobile */}
 
-      <div className="grid-cols-4 gap-x-8 gap-y-4 mb-10 hidden sm:grid" data-testid="filter">
+      <div className={gridClassName ?? 'grid-cols-4 gap-x-8 gap-y-4 mb-10 hidden sm:grid'} data-testid="filter">
         {dataFilter.map((item, index) => {
           return (
-            <div className="col-span-4 sm:col-span-2 lg:col-span-1 mt-2 sm:mt-0" key={`filter_${index}`}>
+            <div
+              className={colClassName ?? 'col-span-4 sm:col-span-2 lg:col-span-1 mt-2 sm:mt-0'}
+              key={`filter_${index}`}
+            >
               {item.FilterComponent}
             </div>
           );

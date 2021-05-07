@@ -51,6 +51,9 @@ export const PaginationStyle = styled.div`
     margin: 0;
   }
   .page-number-input {
+    &:focus {
+      outline: none;
+    }
     -moz-appearance: textfield;
   }
 `;

@@ -235,7 +235,7 @@ export const PaginationUI: React.FC<PaginationUIProps> = ({ data, prefix }) => {
           <form onSubmit={(e) => onSubmitPageNumber(e)}>
             <input
               type="number"
-              className="page-number-input overflow-hidden rounded px-1 w-9 h-full border border-gray-300 hover:border-gray-400 focus:outline-none focus:border-gray-400 duration-300"
+              className="page-number-input overflow-hidden rounded px-1 w-9 h-full border border-gray-300 hover:border-gray-400  focus:border-gray-400 duration-300"
               value={inputNumber}
               onChange={(e) => setInputNumber(e.target.value)}
             />
