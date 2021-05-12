@@ -1,10 +1,10 @@
 // Table
 
 export interface SortIconProps {
+  prefix: string;
   field: string;
 }
 export interface ColumnsProps {
-  enable: boolean;
   field: string;
   title: string | React.ReactElement | React.FC;
   canSort?: boolean;
@@ -13,7 +13,7 @@ export interface ColumnsProps {
 export interface FilterProps {
   gridClassName?: string;
   colClassName?: string;
-  dataFilter: { FilterComponent: React.ReactElement }[];
+  ListFilterComponent: { FilterComponent: React.ReactElement | React.FC }[];
 }
 
 export interface TableProps {
@@ -21,23 +21,11 @@ export interface TableProps {
   loader: Loader<any, Record<string, unknown>>;
   columns: ColumnsProps[];
   Wrapper?: React.FC<Record<string, unknown>>;
-  sort?: {
-    upValue?: string;
-    downValue?: string;
-    seperator?: string;
-    param?: string;
-  };
 }
 
 export interface HeaderProps {
   columns: ColumnsProps[];
   prefix?: string;
-  sort?: {
-    upValue?: string;
-    downValue?: string;
-    seperator?: string;
-    param?: string;
-  };
 }
 
 export interface BodyProps {
@@ -85,14 +73,14 @@ export interface DataPagination {
 }
 
 export interface FetchProps<Filter> {
-  url: string;
   page: number;
   size: number;
   filter: Filter;
+  sort?: Record<string, 'none' | 'asc' | 'desc'>;
 }
 
 export interface Loader<Result, Filter> {
-  url?: string;
   fetch: (input: FetchProps<Filter>) => Promise<Pagination<Result>>;
   render: (data: Result, field: keyof Result) => React.ReactElement;
+  cancel?: () => void;
 }

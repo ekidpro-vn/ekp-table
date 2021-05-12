@@ -148,11 +148,11 @@ const server = setupServer(
 );
 
 const UserLoader: Loader<UserInTable, UserFilter> = {
-  url: '/user/success', // /user/loading, /user/error, /user/10-page, /user/empty
+  // /user/loading, /user/error, /user/10-page, /user/empty
   fetch: async (input) => {
     const response = await axios({
       method: 'get',
-      url: input.url,
+      url: '/user/success',
       params: {
         current_page: input.page,
         per_page: input.size,

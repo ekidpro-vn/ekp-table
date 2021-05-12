@@ -4,7 +4,7 @@ import { FilterStyle } from '../styles/filter.style';
 import { FilterProps } from './types';
 
 export const FilterTable: React.FC<FilterProps> = (props) => {
-  const { dataFilter, gridClassName, colClassName } = props;
+  const { ListFilterComponent, gridClassName, colClassName } = props;
   const [showFilterMobile, setShowFilterMobile] = useState<'load' | 'show' | 'hidden'>('load');
 
   const onToggleFilter = useCallback(() => {
@@ -47,7 +47,7 @@ export const FilterTable: React.FC<FilterProps> = (props) => {
               'expand-filter-mobile': showFilterMobile === 'show',
             })}
           >
-            {dataFilter.map((item, index) => {
+            {ListFilterComponent.map((item, index) => {
               return (
                 <div className="col-span-4 sm:col-span-2 lg:col-span-1 mt-2 sm:mt-0" key={`filter_mb_${index}`}>
                   {item.FilterComponent}
@@ -60,7 +60,7 @@ export const FilterTable: React.FC<FilterProps> = (props) => {
       {/* End mobile */}
 
       <div className={gridClassName ?? 'grid-cols-4 gap-x-8 gap-y-4 mb-10 hidden sm:grid'} data-testid="filter">
-        {dataFilter.map((item, index) => {
+        {ListFilterComponent.map((item, index) => {
           return (
             <div
               className={colClassName ?? 'col-span-4 sm:col-span-2 lg:col-span-1 mt-2 sm:mt-0'}
