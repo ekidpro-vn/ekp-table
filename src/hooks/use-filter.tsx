@@ -1,6 +1,6 @@
+import queryString from 'query-string';
 import { useCallback } from 'react';
 import { useHistory } from 'react-router-dom';
-import queryString from 'query-string';
 
 export const useFilter = (prefix: string): ((params: Record<string, string | undefined>) => void) => {
   const history = useHistory();
@@ -20,4 +20,24 @@ export const useFilter = (prefix: string): ((params: Record<string, string | und
     },
     [history, prefix]
   );
+};
+
+export const getFilter = (prefix: string, parsed: queryString.ParsedQuery<string>): Record<string, unknown> => {
+  let pf = prefix ?? '';
+  if (prefix && /^[-a-zA-Z_]+$/g.test(prefix) === false) {
+    pf = '';
+  }
+  const filter: Record<string, unknown> = {};
+
+  for (const [key, value] of Object.entries(parsed)) {
+    if (!key.startsWith(pf)) {
+      continue;
+    }
+    const filterKey = key.replace(`${pf}_`, '');
+    if (['page', 'size', 'sort'].includes(filterKey)) {
+      continue;
+    }
+    filter[filterKey] = value;
+  }
+  return filter;
 };

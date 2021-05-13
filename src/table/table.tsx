@@ -1,29 +1,68 @@
+import clsx from 'clsx';
 import queryString from 'query-string';
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import React, { memo, useCallback, useEffect, useRef, useState } from 'react';
 import { useLocation } from 'react-router-dom';
+import IconArrowDefault from '../assets/default-arrow.png';
+import IconArrowDown from '../assets/down-arrow.png';
 import { LoadingIcon } from '../assets/loading';
 import ImageNoData from '../assets/no-data.png';
+import IconArrowUp from '../assets/up-arrow.png';
+import { getFilter } from '../hooks/use-filter';
+import { parsedSort, SortValue, useSort } from '../hooks/use-sort';
 import { add, remove } from '../store/loader-inventory';
 import { ErrorPage } from './error';
 import { FilterTable } from './filter';
 import { PaginationUI } from './pagination';
-import { BodyProps, FilterProps, HeaderProps, Pagination, TableProps } from './types';
+import { BodyProps, ColumnsProps, FilterProps, HeaderProps, Pagination, SortIconProps, TableProps } from './types';
+
+const SortIcon: React.FC<SortIconProps> = (props) => {
+  const { field, prefix } = props;
+  const [sort] = useSort(prefix, field);
+
+  if (sort === 'asc') {
+    return <img src={IconArrowUp} alt="asc" className="block ml-2 w-3 h-3 cursor-pointer" />;
+  }
+  if (sort === 'desc') {
+    return <img src={IconArrowDown} alt="asc" className="block ml-2 w-3 h-3 cursor-pointer" />;
+  }
+  return <img src={IconArrowDefault} alt="desc" className="block ml-2 w-3 h-3 cursor-pointer" />;
+};
+
+const RenderThHeader: React.FC<{ prefix: string; item: ColumnsProps }> = (props) => {
+  const { item, prefix } = props;
+  const [sort, setSort] = useSort(prefix, item.field);
+
+  const onFilterSort = useCallback(() => {
+    const arrayValue: SortValue[] = ['asc', 'desc', 'none'];
+    const index = arrayValue.indexOf(sort);
+    const nextValue = index + 1 === arrayValue.length ? arrayValue[0] : arrayValue[index + 1];
+    setSort(nextValue);
+  }, [sort, setSort]);
+
+  return (
+    <th
+      className={clsx({
+        'cursor-pointer duration-300 hover:text-blue-500': item.canSort,
+        'bg-gray-50 p-5': true,
+      })}
+      key={`title_${item.title}`}
+      onClick={item.canSort ? onFilterSort : undefined}
+    >
+      <div className="flex items-center">
+        <span className="block text-gray-900 font-extrabold">{item.title}</span>
+        {item.canSort && <SortIcon field={item.field} prefix={prefix} />}
+      </div>
+    </th>
+  );
+};
 
 const RenderHeader: React.FC<HeaderProps> = (props) => {
   const { columns } = props;
+  const prefix = props.prefix ?? 'default';
+
   return (
     <tr className="bg-gray-800 text-left rounded">
-      {columns &&
-        columns.map((item) => {
-          if (!item.enable) {
-            return null;
-          }
-          return (
-            <th className="text-gray-900 bg-gray-50 font-extrabold p-5" key={`title_${item.title}`}>
-              {item.title}
-            </th>
-          );
-        })}
+      {columns && columns.map((item) => <RenderThHeader key={item.field} item={item} prefix={prefix} />)}
     </tr>
   );
 };
@@ -48,9 +87,6 @@ const RenderBody: React.FC<BodyProps> = (props) => {
             style={{ borderTopWidth: 1 }}
           >
             {columns.map((item2) => {
-              if (!item2.enable) {
-                return null;
-              }
               return (
                 <td key={JSON.stringify(item2)} className="p-5">
                   {loader.render(item, item2.field) ?? item[`${item2.field}`]}
@@ -64,10 +100,10 @@ const RenderBody: React.FC<BodyProps> = (props) => {
   );
 };
 
-const MemoizedHeader = React.memo(RenderHeader);
-const MemoizedBody = React.memo(RenderBody);
+const MemoizedHeader = memo(RenderHeader);
+const MemoizedBody = memo(RenderBody);
 
-export const Table = React.memo((props: TableProps) => {
+export const Table = memo((props: TableProps) => {
   const { columns, prefix, Wrapper } = props;
   const loader = useRef(props.loader);
   const [data, setData] = useState<Pagination<unknown> | null>(null);
@@ -77,37 +113,23 @@ export const Table = React.memo((props: TableProps) => {
 
   const getDataFromRemoteServer = useCallback(() => {
     setLoading(true);
-    const { url, fetch } = loader.current;
-    if (typeof url === 'undefined' || url === null) {
-      throw new Error(`Invalid Url`);
-    }
+    const { fetch } = loader.current;
 
     let pf = prefix ?? '';
-    if (prefix && /^[a-zA-Z]+$/g.test(prefix) === false) {
+    if (prefix && /^[-a-zA-Z_]+$/g.test(prefix) === false) {
       pf = '';
     }
 
     const parsed = queryString.parse(location.search);
+    const objectSort = parsed.sort ? parsedSort(prefix, parsed.sort) : {};
+    const objectFilter = getFilter(prefix, parsed);
 
-    const filter: Record<string, unknown> = {};
-    for (const [key, value] of Object.entries(parsed)) {
-      if (!key.startsWith(pf)) {
-        continue;
-      }
-
-      const filterKey = key.replace(`${pf}_`, '');
-
-      if (['page', 'size'].includes(filterKey)) {
-        continue;
-      }
-
-      filter[filterKey] = value;
-    }
+    // cancel request
     fetch({
-      url,
       page: parseInt((parsed[`${pf}_page`] ?? '1') as string, 10),
       size: parseInt((parsed[`${pf}_size`] ?? '10') as string, 10),
-      filter,
+      filter: objectFilter,
+      sort: objectSort,
     })
       .then((result) => {
         setData(result);
@@ -154,7 +176,7 @@ export const Table = React.memo((props: TableProps) => {
       <div className="overflow-x-scroll">
         <table className="w-full table-auto mb-4">
           <thead>
-            <MemoizedHeader columns={columns} />
+            <MemoizedHeader columns={columns} prefix={prefix} />
           </thead>
           <tbody className="bg-gray-200 w-full">
             <MemoizedBody data={data?.data} columns={columns} loader={loader.current} />
@@ -171,6 +193,8 @@ export const Table = React.memo((props: TableProps) => {
 });
 
 export const Filter: React.FC<FilterProps> = (props) => {
-  const { dataFilter } = props;
-  return <FilterTable dataFilter={dataFilter} />;
+  const { ListFilterComponent, colClassName, gridClassName } = props;
+  return (
+    <FilterTable ListFilterComponent={ListFilterComponent} colClassName={colClassName} gridClassName={gridClassName} />
+  );
 };

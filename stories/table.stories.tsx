@@ -1,7 +1,8 @@
 import { Meta, Story } from '@storybook/react/types-6-0';
 import React from 'react';
 import 'tailwindcss/tailwind.css';
-import { ColumnsProps, Filter, Loader, Pagination, Table, TableProps } from '../src';
+import { ColumnsProps, Loader, Pagination, Table, TableProps } from '../src';
+// import { Filter } from '../src/table/table';
 
 export default {
   title: 'Example/Table',
@@ -11,7 +12,13 @@ export default {
 
 const Template: Story<TableProps> = (args) => (
   <div>
-    <Filter dataFilter={[{ FilterComponent: <div>ducnh</div> }]} />
+    {/* <Filter
+      dataFilter={[
+        { FilterComponent: <div>ducnh</div> },
+        { FilterComponent: <div>ducnh</div> },
+        { FilterComponent: <div>ducnh</div> },
+      ]}
+    /> */}
     <Table {...args} />
   </div>
 );
@@ -26,17 +33,16 @@ type DefaultDataType = {
   updated_at: string;
 };
 const ColumnsAdminList: ColumnsProps[] = [
-  { enable: true, field: 'id', title: '#' },
-  { enable: true, field: 'fullname', title: 'NAME' },
-  { enable: true, field: 'mobile', title: 'PHONE' },
-  { enable: true, field: 'email', title: 'EMAIL' },
-  { enable: true, field: 'address', title: 'ADDRESS' },
-  { enable: true, field: 'status', title: 'STATUS' },
-  { enable: true, field: 'created_at', title: 'CREATED_AT' },
-  { enable: true, field: 'updated_at', title: 'UPDATED_AT' },
+  { field: 'id', title: '#', canSort: true },
+  { field: 'fullname', title: 'NAME', canSort: true },
+  { field: 'mobile', title: 'PHONE' },
+  { field: 'email', title: 'EMAIL' },
+  { field: 'address', title: 'ADDRESS' },
+  { field: 'status', title: 'STATUS' },
+  { field: 'created_at', title: 'CREATED_AT' },
+  { field: 'updated_at', title: 'UPDATED_AT' },
 ];
 const defaultLoader: Loader<DefaultDataType, { keyword: string }> = {
-  url: 'api on server, we will mock something',
   fetch: (input) => {
     return new Promise((resolve) => {
       setTimeout(() => {
