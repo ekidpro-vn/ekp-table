@@ -5,6 +5,7 @@
 
 [![GitHub issues](https://img.shields.io/github/issues/ekidpro-vn/ekp-table)](https://github.com/ekidpro-vn/ekp-table/issues) 
 ![npm](https://img.shields.io/npm/v/@ekidpro/table)
+![NPM](https://img.shields.io/npm/l/@ekidpro/table)
 
 
 Nothing here to stay
