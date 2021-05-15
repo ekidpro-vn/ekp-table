@@ -3,7 +3,8 @@
 
 # UI based on tailwindcss with minimum requirements for ekidpro
 
-(https://img.shields.io/npm/v/@ekidpro/table)](https://www.npmjs.com/package/@ekidpro/table)
+[![GitHub issues](https://img.shields.io/github/issues/ekidpro-vn/ekp-table)](https://github.com/ekidpro-vn/ekp-table/issues) 
+![npm](https://img.shields.io/npm/v/@ekidpro/table)
 
 
 Nothing here to stay
