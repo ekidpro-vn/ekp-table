@@ -13,3 +13,5 @@ Nothing here to stay
 We are still in the development
 
 So, if you want to make the first try, check it on: https://ekidpro-vn.github.io/ekp-table/
+
+Install: npm i @ekidpro/table
