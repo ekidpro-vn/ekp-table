@@ -16,11 +16,12 @@ export interface FilterProps {
   ListFilterComponent: { FilterComponent: React.ReactElement | React.FC }[];
 }
 
-export interface TableProps {
+export interface TableProps<Result> {
   prefix?: string;
-  loader: Loader<any, Record<string, unknown>>;
+  loader: Loader<Result, Record<string, unknown>>;
   columns: ColumnsProps[];
   Wrapper?: React.FC<Record<string, unknown>>;
+  render?: (data: Result, column: ColumnsProps) => React.ReactElement;
 }
 
 export interface HeaderProps {
@@ -28,10 +29,10 @@ export interface HeaderProps {
   prefix?: string;
 }
 
-export interface BodyProps {
-  data: unknown;
+export interface BodyProps<Result> {
+  data: Result[];
   columns: ColumnsProps[];
-  loader: Loader<any, Record<string, unknown>>;
+  render?: (data: Result, column: ColumnsProps) => React.ReactElement;
 }
 
 // Pagination
@@ -81,6 +82,5 @@ export interface FetchProps<Filter> {
 
 export interface Loader<Result, Filter> {
   fetch: (input: FetchProps<Filter>) => Promise<Pagination<Result>>;
-  render: (data: Result, field: keyof Result) => React.ReactElement;
   cancel?: () => void;
 }

@@ -67,8 +67,8 @@ const RenderHeader: React.FC<HeaderProps> = (props) => {
   );
 };
 
-const RenderBody: React.FC<BodyProps> = (props) => {
-  const { data, columns, loader } = props;
+const RenderBody = <Result extends Record<string, unknown>>(props: BodyProps<Result>) => {
+  const { data, columns, render } = props;
   if (!data || !Array.isArray(data) || data.length === 0) {
     return (
       <td colSpan={columns.length} className="bg-white w-full" data-testid="empty">
@@ -89,7 +89,7 @@ const RenderBody: React.FC<BodyProps> = (props) => {
             {columns.map((item2) => {
               return (
                 <td key={JSON.stringify(item2)} className="p-5">
-                  {loader.render(item, item2.field) ?? item[`${item2.field}`]}
+                  {render ? render(item, item2) : item[`${item2.field}`]}
                 </td>
               );
             })}
@@ -103,7 +103,7 @@ const RenderBody: React.FC<BodyProps> = (props) => {
 const MemoizedHeader = memo(RenderHeader);
 const MemoizedBody = memo(RenderBody);
 
-export const Table = memo((props: TableProps) => {
+export const Table = memo(<Result extends Record<string, unknown>>(props: TableProps<Result>) => {
   const { columns, prefix, Wrapper } = props;
   const loader = useRef(props.loader);
   const [data, setData] = useState<Pagination<unknown> | null>(null);
