@@ -10,7 +10,7 @@ export default {
   argTypes: {},
 } as Meta;
 
-const Template: Story<TableProps> = (args) => (
+const Template: Story<TableProps<DefaultDataType>> = (args) => (
   <div>
     {/* <Filter
       dataFilter={[
@@ -41,12 +41,13 @@ const ColumnsAdminList: ColumnsProps[] = [
   { field: 'status', title: 'STATUS' },
   { field: 'created_at', title: 'CREATED_AT' },
   { field: 'updated_at', title: 'UPDATED_AT' },
+  { field: 'action', title: 'ACTION' },
 ];
 const defaultLoader: Loader<DefaultDataType, { keyword: string }> = {
   fetch: (input) => {
     return new Promise((resolve) => {
       setTimeout(() => {
-        resolve();
+        resolve(1);
       }, 3000);
     }).then(() => {
       const items = [
@@ -115,9 +116,10 @@ const defaultLoader: Loader<DefaultDataType, { keyword: string }> = {
       return result;
     });
   },
-  render: (data, field) => {
-    return <span>{data[field] ?? 'Unknown'}</span>;
-  },
+};
+
+const render = (data: DefaultDataType, column: ColumnsProps) => {
+  return <span>{data[column.field] ?? null}</span>;
 };
 
 export const DefaultTable = Template.bind({});
@@ -125,4 +127,5 @@ DefaultTable.args = {
   loader: defaultLoader,
   columns: ColumnsAdminList,
   prefix: 'default',
+  render: render,
 };
