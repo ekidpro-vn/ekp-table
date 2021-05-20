@@ -1,6 +1,6 @@
 import clsx from 'clsx';
 import queryString from 'query-string';
-import React, { memo, useCallback, useEffect, useRef, useState } from 'react';
+import React, { memo, PropsWithChildren, useCallback, useEffect, useRef, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import IconArrowDefault from '../assets/default-arrow.png';
 import IconArrowDown from '../assets/down-arrow.png';
@@ -67,7 +67,7 @@ const RenderHeader: React.FC<HeaderProps> = (props) => {
   );
 };
 
-const RenderBody = <Result extends Record<string, unknown>>(props: BodyProps<Result>) => {
+function RenderBody<R>(props: BodyProps<R>): JSX.Element {
   const { data, columns, render } = props;
   if (!data || !Array.isArray(data) || data.length === 0) {
     return (
@@ -98,15 +98,22 @@ const RenderBody = <Result extends Record<string, unknown>>(props: BodyProps<Res
       })}
     </>
   );
-};
+}
 
 const MemoizedHeader = memo(RenderHeader);
 const MemoizedBody = memo(RenderBody);
 
-export const Table = memo(<Result extends Record<string, unknown>>(props: TableProps<Result>) => {
+export const Filter: React.FC<FilterProps> = (props) => {
+  const { ListFilterComponent, colClassName, gridClassName } = props;
+  return (
+    <FilterTable ListFilterComponent={ListFilterComponent} colClassName={colClassName} gridClassName={gridClassName} />
+  );
+};
+
+export function Table<R>(props: TableProps<R>): JSX.Element {
   const { columns, prefix, Wrapper, render } = props;
   const loader = useRef(props.loader);
-  const [data, setData] = useState<Pagination<Result> | null>(null);
+  const [data, setData] = useState<Pagination<R> | null>(null);
   const [err, setError] = useState<Error | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
   const location = useLocation();
@@ -153,7 +160,6 @@ export const Table = memo(<Result extends Record<string, unknown>>(props: TableP
       remove(prefix, getDataFromRemoteServer);
     };
   }, [prefix, getDataFromRemoteServer]);
-
   if (err !== null) {
     return Wrapper ? <Wrapper children={<ErrorPage />} /> : <ErrorPage />;
   }
@@ -190,11 +196,4 @@ export const Table = memo(<Result extends Record<string, unknown>>(props: TableP
   );
 
   return Wrapper ? <Wrapper children={tmp} /> : tmp;
-});
-
-export const Filter: React.FC<FilterProps> = (props) => {
-  const { ListFilterComponent, colClassName, gridClassName } = props;
-  return (
-    <FilterTable ListFilterComponent={ListFilterComponent} colClassName={colClassName} gridClassName={gridClassName} />
-  );
-};
+}

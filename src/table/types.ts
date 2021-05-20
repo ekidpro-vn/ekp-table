@@ -1,13 +1,8 @@
-// Table
+export type ResultType = Record<string, any>;
 
 export interface SortIconProps {
   prefix: string;
   field: string;
-}
-export interface ColumnsProps {
-  field: string;
-  title: string | React.ReactElement | React.FC;
-  canSort?: boolean;
 }
 
 export interface FilterProps {
@@ -16,26 +11,19 @@ export interface FilterProps {
   ListFilterComponent: { FilterComponent: React.ReactElement | React.FC }[];
 }
 
-export interface TableProps<Result> {
-  prefix?: string;
-  loader: Loader<Result, Record<string | symbol, unknown>>;
-  columns: ColumnsProps[];
-  Wrapper?: React.FC<Record<string, unknown>>;
-  render?: (data: Result, column: ColumnsProps) => React.ReactElement;
-}
-
 export interface HeaderProps {
   columns: ColumnsProps[];
   prefix?: string;
 }
 
-export interface BodyProps<Result> {
-  data: Result[];
-  columns: ColumnsProps[];
-  render?: (data: Result, column: ColumnsProps) => React.ReactElement;
+// Pagination
+export interface DataPagination {
+  currentPage: number;
+  perPage: number;
+  totalItems: number;
+  totalPages: number;
 }
 
-// Pagination
 export interface PageSizeDropdownProps {
   pagination: DataPagination;
   dataPageSize: { value: number; label: string }[];
@@ -51,13 +39,26 @@ export interface PageNumberProps {
 }
 
 export interface PaginationUIProps {
-  data: Pagination<unknown> | null;
+  data: Pagination<ResultType> | null;
   prefix: string;
 }
 
-// Loader
-export interface Pagination<T> {
-  data: T[];
+// Table
+
+export interface ColumnsProps {
+  field: string;
+  title: string | React.ReactElement | React.FC;
+  canSort?: boolean;
+}
+
+export interface BodyProps<R> {
+  data: R[];
+  columns: ColumnsProps[];
+  render?: (data: R, column: ColumnsProps) => JSX.Element | React.ReactElement;
+}
+
+export interface Pagination<R> {
+  data: R[];
   pagination: {
     currentPage: number;
     perPage: number;
@@ -66,21 +67,22 @@ export interface Pagination<T> {
   };
 }
 
-export interface DataPagination {
-  currentPage: number;
-  perPage: number;
-  totalItems: number;
-  totalPages: number;
-}
-
-export interface FetchProps<Filter> {
+export interface FetchProps<F> {
   page: number;
   size: number;
-  filter: Filter;
+  filter: F;
   sort?: Record<string, 'none' | 'asc' | 'desc'>;
 }
 
-export interface Loader<Result, Filter> {
-  fetch: (input: FetchProps<Filter>) => Promise<Pagination<Result>>;
+export interface Loader<R, F> {
+  fetch: (input: FetchProps<F>) => Promise<Pagination<R>>;
   cancel?: () => void;
+}
+
+export interface TableProps<R> {
+  prefix?: string;
+  loader: Loader<R, Record<string, any>>;
+  columns: ColumnsProps[];
+  Wrapper?: React.FC<Record<string, unknown>>;
+  render: (data: R, column: ColumnsProps) => JSX.Element | React.ReactElement;
 }

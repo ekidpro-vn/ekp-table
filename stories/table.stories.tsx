@@ -19,7 +19,12 @@ const Template: Story<TableProps<DefaultDataType>> = (args) => (
         { FilterComponent: <div>ducnh</div> },
       ]}
     /> */}
-    <Table {...args} />
+    <Table
+      {...args}
+      render={(data: DefaultDataType, column) => {
+        return <div>{data.fullname}</div>;
+      }}
+    />
   </div>
 );
 type DefaultDataType = {

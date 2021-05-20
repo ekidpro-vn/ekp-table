@@ -5,17 +5,13 @@ import { get } from 'lodash';
 import { rest } from 'msw';
 import { setupServer } from 'msw/node';
 import React from 'react';
-import { Filter, Table } from './table';
+import { Table } from './table';
 import { ColumnsProps, Loader, Pagination } from './types';
 
 interface UserFilter {
   type?: string;
   keyword?: string;
   status?: string;
-}
-
-interface UserInTable extends UserInfo {
-  action?: string;
 }
 
 export interface UserInfo {
@@ -34,14 +30,14 @@ export interface UserInfo {
 }
 
 export const ColumnsAdminList: ColumnsProps[] = [
-  { enable: true, field: 'uid', title: '#' },
-  { enable: true, field: 'fullname', title: 'INFO' },
-  { enable: true, field: 'mobile', title: 'PHONE' },
-  { enable: true, field: 'email', title: 'EMAIL' },
-  { enable: true, field: 'status', title: 'STATUS' },
-  { enable: true, field: 'created_at', title: 'CREATED_AT' },
-  { enable: true, field: 'updated_at', title: 'UPDATED_AT' },
-  { enable: true, field: 'action', title: 'ACTION' },
+  { field: 'uid', title: '#' },
+  { field: 'fullname', title: 'INFO' },
+  { field: 'mobile', title: 'PHONE' },
+  { field: 'email', title: 'EMAIL' },
+  { field: 'status', title: 'STATUS' },
+  { field: 'created_at', title: 'CREATED_AT' },
+  { field: 'updated_at', title: 'UPDATED_AT' },
+  { field: 'action', title: 'ACTION' },
 ];
 
 const server = setupServer(
@@ -147,7 +143,7 @@ const server = setupServer(
   })
 );
 
-const UserLoader: Loader<UserInTable, UserFilter> = {
+const UserLoader: Loader<UserInfo, { keyword: string }> = {
   // /user/loading, /user/error, /user/10-page, /user/empty
   fetch: async (input) => {
     const response = await axios({
@@ -179,27 +175,28 @@ const UserLoader: Loader<UserInTable, UserFilter> = {
     };
     return result;
   },
-  render: (data, field) => {
-    if (!data) {
-      return <></>;
-    }
+};
 
-    const { uid, avatar, fullname, username, mobile, email, status, created_at, updated_at } = data;
+const renderView = (data: UserInfo, column: ColumnsProps) => {
+  if (!data) {
+    return <></>;
+  }
 
-    switch (field) {
-      case 'uid':
-        return <span>{uid}</span>;
+  const { uid, avatar, fullname, username, mobile, email, status, created_at, updated_at } = data;
 
-      case 'fullname':
-        return <span>{uid}</span>;
+  switch (column.field) {
+    case 'uid':
+      return <span>{uid}</span>;
 
-      case 'mobile':
-        return <span>{uid}</span>;
+    case 'fullname':
+      return <span>{uid}</span>;
 
-      default:
-        return <span>{get(data, 'field')}</span>;
-    }
-  },
+    case 'mobile':
+      return <span>{uid}</span>;
+
+    default:
+      return <span>{get(data, 'column.field')}</span>;
+  }
 };
 
 beforeAll(() => server.listen());
@@ -225,7 +222,7 @@ afterAll(() => server.close());
 
 test('1. Exist table, pagination', async () => {
   await act(async () => {
-    const { findByTestId } = render(<Table loader={UserLoader} columns={ColumnsAdminList} />);
+    const { findByTestId } = render(<Table loader={UserLoader} columns={ColumnsAdminList} render={renderView} />);
     const table = await findByTestId('table');
     const pagination = await findByTestId('pagination');
 
@@ -239,7 +236,33 @@ test('2. Exist wrapper', async () => {
     const Wrapper: React.FC = (props) => {
       return <div data-testid="wrapper">{props.children}</div>;
     };
-    const { findByTestId } = render(<Table loader={UserLoader} columns={ColumnsAdminList} Wrapper={Wrapper} />);
+    const { findByTestId } = render(
+      <Table<UserInfo>
+        loader={UserLoader}
+        columns={ColumnsAdminList}
+        Wrapper={Wrapper}
+        render={(data, column: ColumnsProps) => {
+          if (!data) {
+            return <></>;
+          }
+          const { field } = column;
+
+          switch (column.field) {
+            case 'uid':
+              return <span>{data[field]}</span>;
+
+            case 'fullname':
+              return <span>{data[field]}</span>;
+
+            case 'mobile':
+              return <span>{data[field]}</span>;
+
+            default:
+              return <span>{get(data, 'column.field')}</span>;
+          }
+        }}
+      />
+    );
     const wrapper = await findByTestId('wrapper');
     const table = await findByTestId('table');
 
@@ -253,8 +276,7 @@ test('3. Exist filter data', async () => {
     const dataFilter = [{ FilterComponent: <div>ducnh</div> }];
     const { findByTestId } = render(
       <>
-        <Filter dataFilter={dataFilter} />
-        <Table loader={UserLoader} columns={ColumnsAdminList} />
+        <Table loader={UserLoader} columns={ColumnsAdminList} render={renderView} />
       </>
     );
     const filter = await findByTestId('filter');
@@ -270,8 +292,8 @@ test('3. Exist filter data', async () => {
 test('4. Empty data', async () => {
   await act(async () => {
     const configLoader = UserLoader;
-    configLoader.url = '/user/empty';
-    const { findByTestId } = render(<Table loader={configLoader} columns={ColumnsAdminList} />);
+    // configLoader.url = '/user/empty';
+    const { findByTestId } = render(<Table loader={configLoader} columns={ColumnsAdminList} render={renderView} />);
     const empty = await findByTestId('empty');
     const table = await findByTestId('table');
 
@@ -283,8 +305,8 @@ test('4. Empty data', async () => {
 test('5. API error', async () => {
   await act(async () => {
     const configLoader = UserLoader;
-    configLoader.url = '/user/error';
-    const { findByTestId } = render(<Table loader={configLoader} columns={ColumnsAdminList} />);
+    // configLoader.url = '/user/error';
+    const { findByTestId } = render(<Table loader={configLoader} columns={ColumnsAdminList} render={renderView} />);
     const error = await findByTestId('error');
 
     expect(error).toBeTruthy();
@@ -294,8 +316,8 @@ test('5. API error', async () => {
 test('6. Exist loading', async () => {
   await act(async () => {
     const configLoader = UserLoader;
-    configLoader.url = '/user/loading';
-    const { findByTestId } = render(<Table loader={configLoader} columns={ColumnsAdminList} />);
+    // configLoader.url = '/user/loading';
+    const { findByTestId } = render(<Table loader={configLoader} columns={ColumnsAdminList} render={renderView} />);
     const loading = await findByTestId('loading');
 
     expect(loading).toBeTruthy();
@@ -305,8 +327,8 @@ test('6. Exist loading', async () => {
 test('7. API error html', async () => {
   await act(async () => {
     const configLoader = UserLoader;
-    configLoader.url = '/user/html';
-    const { findByTestId } = render(<Table loader={configLoader} columns={ColumnsAdminList} />);
+    // configLoader.url = '/user/html';
+    const { findByTestId } = render(<Table loader={configLoader} columns={ColumnsAdminList} render={renderView} />);
     const error = await findByTestId('error');
 
     expect(error).toBeTruthy();
