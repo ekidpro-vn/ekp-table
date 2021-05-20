@@ -104,9 +104,9 @@ const MemoizedHeader = memo(RenderHeader);
 const MemoizedBody = memo(RenderBody);
 
 export const Table = memo(<Result extends Record<string, unknown>>(props: TableProps<Result>) => {
-  const { columns, prefix, Wrapper } = props;
+  const { columns, prefix, Wrapper, render } = props;
   const loader = useRef(props.loader);
-  const [data, setData] = useState<Pagination<unknown> | null>(null);
+  const [data, setData] = useState<Pagination<Result> | null>(null);
   const [err, setError] = useState<Error | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
   const location = useLocation();
@@ -179,7 +179,7 @@ export const Table = memo(<Result extends Record<string, unknown>>(props: TableP
             <MemoizedHeader columns={columns} prefix={prefix} />
           </thead>
           <tbody className="bg-gray-200 w-full">
-            <MemoizedBody data={data?.data} columns={columns} loader={loader.current} />
+            <MemoizedBody data={data?.data} columns={columns} render={render} />
           </tbody>
         </table>
       </div>
