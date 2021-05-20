@@ -3,7 +3,7 @@ import React from 'react';
 import 'tailwindcss/tailwind.css';
 import { Loader, Pagination, ColumnsProps, Table, TableProps, useRefresh } from '../src';
 
-const Template: Story<TableProps> = (args) => {
+const Template: Story<TableProps<{ id: number }>> = (args) => {
   const refresh = useRefresh(args.prefix);
 
   return (
@@ -17,7 +17,6 @@ const Template: Story<TableProps> = (args) => {
 };
 
 const defaultLoader: Loader<{ id: number }, { keyword: string }> = {
-  url: 'api on server, we will mock something',
   fetch: () => {
     return new Promise<void>((resolve) => {
       setTimeout(() => {
@@ -43,12 +42,9 @@ const defaultLoader: Loader<{ id: number }, { keyword: string }> = {
       return result;
     });
   },
-  render: (data, field) => {
-    return <span>{data[field] ?? 'Unknown'}</span>;
-  },
 };
 
-const tableColumns: ColumnsProps[] = [{ enable: true, field: 'id', title: '#' }];
+const tableColumns: ColumnsProps[] = [{ field: 'id', title: '#' }];
 
 export const TableWithRefresh = Template.bind({});
 TableWithRefresh.args = {
