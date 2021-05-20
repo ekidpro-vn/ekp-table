@@ -18,7 +18,7 @@ export interface FilterProps {
 
 export interface TableProps<Result> {
   prefix?: string;
-  loader: Loader<Result, Record<string, unknown>>;
+  loader: Loader<Result, Record<string | symbol, unknown>>;
   columns: ColumnsProps[];
   Wrapper?: React.FC<Record<string, unknown>>;
   render?: (data: Result, column: ColumnsProps) => React.ReactElement;
