@@ -84,5 +84,5 @@ export interface TableProps<R> {
   loader: Loader<R, Record<string, any>>;
   columns: ColumnsProps[];
   Wrapper?: React.FC<Record<string, unknown>>;
-  render: (data: R, column: ColumnsProps) => JSX.Element | React.ReactElement;
+  render?: (data: R, column: ColumnsProps) => JSX.Element | React.ReactElement | null;
 }
