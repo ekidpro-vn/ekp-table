@@ -82,13 +82,13 @@ function RenderBody<R>(props: BodyProps<R>): JSX.Element {
       {data.map((item, index) => {
         return (
           <tr
-            key={JSON.stringify(index)}
+            key={`cell_${index}_${Math.random()}`}
             className="bg-white border-gray-200 text-left py-3"
             style={{ borderTopWidth: 1 }}
           >
-            {columns.map((item2) => {
+            {columns.map((item2, index) => {
               return (
-                <td key={JSON.stringify(item2)} className="p-5">
+                <td key={`column_${item2.field}_${index}`} className="p-5">
                   {render ? render(item, item2) : item[`${item2.field}`]}
                 </td>
               );
