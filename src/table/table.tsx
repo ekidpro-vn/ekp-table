@@ -139,11 +139,13 @@ export function Table<R>(props: TableProps<R>): JSX.Element {
       sort: objectSort,
     })
       .then((result) => {
+        setError(null);
         setData(result);
-        setLoading(false);
       })
       .catch((err: Error) => {
         setError(err);
+      })
+      .finally(() => {
         setLoading(false);
       });
   }, [loader, prefix, location]);
