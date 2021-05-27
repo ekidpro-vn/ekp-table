@@ -21,8 +21,8 @@ const Template: Story<TableProps<DefaultDataType>> = (args) => (
     /> */}
     <Table
       {...args}
-      render={(data: DefaultDataType, column) => {
-        return <div>{data.fullname}</div>;
+      render={(data, column) => {
+        return <span>{data[column.field]}</span>;
       }}
     />
   </div>
@@ -31,7 +31,6 @@ type DefaultDataType = {
   id: number;
   fullname: string;
   mobile: string;
-  email: string;
   address: string;
   status: string;
   created_at: string;
@@ -43,8 +42,6 @@ const ColumnsAdminList: ColumnsProps[] = [
   { field: 'mobile', title: 'PHONE' },
   { field: 'email', title: 'EMAIL' },
   { field: 'address', title: 'ADDRESS' },
-  { field: 'status', title: 'STATUS' },
-  { field: 'created_at', title: 'CREATED_AT' },
   { field: 'updated_at', title: 'UPDATED_AT' },
   { field: 'action', title: 'ACTION' },
 ];
@@ -132,5 +129,4 @@ DefaultTable.args = {
   loader: defaultLoader,
   columns: ColumnsAdminList,
   prefix: 'default',
-  render: render,
 };

@@ -1,6 +1,7 @@
 import clsx from 'clsx';
 import queryString from 'query-string';
-import React, { memo, PropsWithChildren, useCallback, useEffect, useRef, useState } from 'react';
+import { get } from 'lodash';
+import React, { memo, useCallback, useEffect, useRef, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import IconArrowDefault from '../assets/default-arrow.png';
 import IconArrowDown from '../assets/down-arrow.png';
@@ -89,7 +90,7 @@ function RenderBody<R>(props: BodyProps<R>): JSX.Element {
             {columns.map((item2, index) => {
               return (
                 <td key={`column_${item2.field}_${index}`} className="p-5">
-                  {render ? render(item, item2) : item[`${item2.field}`]}
+                  {render ? render(item, item2) : get(item, `${item2.field}`)}
                 </td>
               );
             })}
