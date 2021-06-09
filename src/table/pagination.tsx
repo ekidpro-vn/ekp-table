@@ -232,14 +232,6 @@ export const PaginationUI: React.FC<PaginationUIProps> = ({ data, prefix }) => {
             />
           ))}
           <span className="pt-3 block mx-1.5 text-lg">. . .</span>
-          <form onSubmit={(e) => onSubmitPageNumber(e)}>
-            <input
-              type="number"
-              className="page-number-input overflow-hidden rounded px-1 w-9 h-full border border-gray-300 hover:border-gray-400  focus:border-gray-400 duration-300"
-              value={inputNumber}
-              onChange={(e) => setInputNumber(e.target.value)}
-            />
-          </form>
           <PageNumber
             page={currentPage + 1}
             special="next"
@@ -253,6 +245,17 @@ export const PaginationUI: React.FC<PaginationUIProps> = ({ data, prefix }) => {
             disable={currentPage >= totalPages}
             onClick={() => onSelectPage(totalPages, currentPage >= totalPages)}
           />
+          <div className="flex items-center mr-4 ml-8">
+            <span className="block mr-2">Go to page</span>
+            <form onSubmit={(e) => onSubmitPageNumber(e)}>
+              <input
+                type="number"
+                className="page-number-input overflow-hidden rounded-md px-1 w-9 h-9 border border-gray-300 hover:border-gray-400  focus:border-gray-400 duration-300"
+                value={inputNumber}
+                onChange={(e) => setInputNumber(e.target.value)}
+              />
+            </form>
+          </div>
         </div>
       </div>
     </PaginationStyle>

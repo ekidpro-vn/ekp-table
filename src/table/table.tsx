@@ -1,6 +1,6 @@
 import clsx from 'clsx';
-import queryString from 'query-string';
 import { get } from 'lodash';
+import queryString from 'query-string';
 import React, { memo, useCallback, useEffect, useRef, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import IconArrowDefault from '../assets/default-arrow.png';
@@ -101,6 +101,21 @@ function RenderBody<R>(props: BodyProps<R>): JSX.Element {
   );
 }
 
+const RenderLoading: React.FC = () => {
+  return (
+    <div
+      className="absolute z-50 top-0 left-0 flex items-center justify-center min-h-96 bg-gray-100 bg-opacity-50 w-full h-full pt-10 pb-20"
+      data-testid="loading"
+    >
+      <div className="absolute left-0 top-32 right-0 mx-auto w-52 text-center flex shadow-md rounded-full items-center px-4 overflow-hidden bg-white">
+        <LoadingIcon />
+        <span className="mx-3 text-indigo-900 font-semibold">Loading...</span>
+      </div>
+    </div>
+  );
+};
+
+const MemoizedLoading = memo(RenderLoading);
 const MemoizedHeader = memo(RenderHeader);
 const MemoizedBody = memo(RenderBody);
 
@@ -167,21 +182,9 @@ export function Table<R>(props: TableProps<R>): JSX.Element {
     return Wrapper ? <Wrapper children={<ErrorPage />} /> : <ErrorPage />;
   }
 
-  if ((data === null && err === null) || loading) {
-    const tmp = (
-      <div className="flex items-center justify-center mt-32 min-h-96 bg-white pt-10 pb-20" data-testid="loading">
-        <div className="flex shadow-md rounded-full items-center px-4 overflow-hidden">
-          <LoadingIcon />
-          <span className="mx-3 text-indigo-900 font-semibold">Loading...</span>
-        </div>
-      </div>
-    );
-
-    return Wrapper ? <Wrapper children={tmp} /> : tmp;
-  }
-
   const tmp = (
-    <div className="overflow-hidden" data-testid="table">
+    <div className="overflow-hidden bg-white relative" data-testid="table">
+      {((data === null && err === null) || loading) && <MemoizedLoading />}
       <div className="overflow-x-scroll">
         <table className="w-full table-auto mb-4">
           <thead>
