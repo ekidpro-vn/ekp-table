@@ -108,10 +108,10 @@ const defaultLoader: Loader<DefaultDataType, { keyword: string }> = {
       const result: Pagination<DefaultDataType> = {
         data: items,
         pagination: {
-          currentPage: 1, // input.page,
-          perPage: 5, // input.size,
-          totalItems: 5,
-          totalPages: 1,
+          currentPage: 3, // input.page,
+          perPage: 10, // input.size,
+          totalItems: 92,
+          totalPages: 10,
         },
       };
 

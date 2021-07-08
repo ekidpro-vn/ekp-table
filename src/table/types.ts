@@ -27,7 +27,7 @@ export interface DataPagination {
 export interface PageSizeDropdownProps {
   pagination: DataPagination;
   dataPageSize: { value: number; label: string }[];
-  prefix: string;
+  onSelectSize: (size: number) => void;
 }
 
 export interface PageNumberProps {

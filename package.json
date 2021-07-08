@@ -1,6 +1,6 @@
 {
   "name": "@ekidpro/table",
-  "version": "1.2.04",
+  "version": "1.2.5",
   "main": "./build/index.js",
   "module": "./build/index.es.js",
   "files": [
@@ -8,7 +8,7 @@
   ],
   "scripts": {
     "test": "jest --detectOpenHandles",
-    "storybook": "start-storybook -p 6006",
+    "storybook": "start-storybook -p 1111",
     "build-storybook": "build-storybook",
     "build": "rollup -c",
     "predeploy": "npm run build-storybook",
