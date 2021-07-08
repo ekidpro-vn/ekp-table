@@ -1,12 +1,10 @@
 import clsx from 'clsx';
+import { get } from 'lodash';
 import queryString from 'query-string';
 import React, { memo, useCallback, useEffect, useRef, useState } from 'react';
 import { useLocation } from 'react-router-dom';
-import IconArrowDefault from '../assets/default-arrow.png';
-import IconArrowDown from '../assets/down-arrow.png';
 import { LoadingIcon } from '../assets/loading';
-import ImageNoData from '../assets/no-data.png';
-import IconArrowUp from '../assets/up-arrow.png';
+import { NoDataIcon } from '../assets/nodata-icon';
 import { getFilter } from '../hooks/use-filter';
 import { parsedSort, SortValue, useSort } from '../hooks/use-sort';
 import { add, remove } from '../store/loader-inventory';
@@ -20,12 +18,53 @@ const SortIcon: React.FC<SortIconProps> = (props) => {
   const [sort] = useSort(prefix, field);
 
   if (sort === 'asc') {
-    return <img src={IconArrowUp} alt="asc" className="block ml-2 w-3 h-3 cursor-pointer" />;
+    return (
+      <div className="ml-2 w-4 h-4 cursor-pointer text-blue-500">
+        <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
+          <path
+            fillRule="evenodd"
+            d="M5.293 9.707a1 1 0 010-1.414l4-4a1 1 0 011.414 0l4 4a1 1 0 01-1.414 1.414L11 7.414V15a1 1 0 11-2 0V7.414L6.707 9.707a1 1 0 01-1.414 0z"
+            clipRule="evenodd"
+          />
+        </svg>
+      </div>
+    );
   }
   if (sort === 'desc') {
-    return <img src={IconArrowDown} alt="asc" className="block ml-2 w-3 h-3 cursor-pointer" />;
+    return (
+      <div className="ml-2 w-4 h-4 cursor-pointer text-blue-500">
+        <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
+          <path
+            fillRule="evenodd"
+            d="M14.707 10.293a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 111.414-1.414L9 12.586V5a1 1 0 012 0v7.586l2.293-2.293a1 1 0 011.414 0z"
+            clipRule="evenodd"
+          />
+        </svg>
+      </div>
+    );
   }
-  return <img src={IconArrowDefault} alt="desc" className="block ml-2 w-3 h-3 cursor-pointer" />;
+  return (
+    <div className="w-5 h-4 ml-2 relative">
+      <div className="w-3 h-3 cursor-pointer text-gray-300 absolute top-0 right-0">
+        <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3" viewBox="0 0 20 20" fill="currentColor">
+          <path
+            fillRule="evenodd"
+            d="M5.293 7.707a1 1 0 010-1.414l4-4a1 1 0 011.414 0l4 4a1 1 0 01-1.414 1.414L11 5.414V17a1 1 0 11-2 0V5.414L6.707 7.707a1 1 0 01-1.414 0z"
+            clipRule="evenodd"
+          />
+        </svg>
+      </div>
+      <div className="w-3 h-3 cursor-pointer text-gray-300 absolute bottom-0 left-0">
+        <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3" viewBox="0 0 20 20" fill="currentColor">
+          <path
+            fillRule="evenodd"
+            d="M14.707 12.293a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 111.414-1.414L9 14.586V3a1 1 0 012 0v11.586l2.293-2.293a1 1 0 011.414 0z"
+            clipRule="evenodd"
+          />
+        </svg>
+      </div>
+    </div>
+  );
 };
 
 const RenderThHeader: React.FC<{ prefix: string; item: ColumnsProps }> = (props) => {
@@ -67,12 +106,22 @@ const RenderHeader: React.FC<HeaderProps> = (props) => {
   );
 };
 
-const RenderBody: React.FC<BodyProps> = (props) => {
-  const { data, columns, loader } = props;
-  if (!data || !Array.isArray(data) || data.length === 0) {
+function RenderBody<R>(props: BodyProps<R>): JSX.Element {
+  const { columns, render, data } = props;
+
+  if (!data) {
+    return <td colSpan={columns.length} className="w-full h-80 relative bg-gray-50" data-testid="empty"></td>;
+  }
+
+  if (!Array.isArray(data) || data.length === 0) {
     return (
-      <td colSpan={columns.length} className="bg-white w-full" data-testid="empty">
-        <img src={ImageNoData} alt="no data" className="block w-80 mx-auto" />
+      <td colSpan={columns.length} className="w-full h-80 relative bg-gray-50" data-testid="empty">
+        <div className="w-full flex items-center justify-center">
+          <div className="flex items-center">
+            <NoDataIcon />
+            <span className="block ml-10 font-semibold text-lg uppercase text-indigo-800">No data</span>
+          </div>
+        </div>
       </td>
     );
   }
@@ -82,14 +131,14 @@ const RenderBody: React.FC<BodyProps> = (props) => {
       {data.map((item, index) => {
         return (
           <tr
-            key={JSON.stringify(index)}
+            key={`cell_${index}_${Math.random()}`}
             className="bg-white border-gray-200 text-left py-3"
             style={{ borderTopWidth: 1 }}
           >
-            {columns.map((item2) => {
+            {columns.map((item2, index) => {
               return (
-                <td key={JSON.stringify(item2)} className="p-5">
-                  {loader.render(item, item2.field) ?? item[`${item2.field}`]}
+                <td key={`column_${item2.field}_${index}`} className="p-5">
+                  {render ? render(item, item2) : get(item, `${item2.field}`)}
                 </td>
               );
             })}
@@ -98,15 +147,38 @@ const RenderBody: React.FC<BodyProps> = (props) => {
       })}
     </>
   );
+}
+
+const RenderLoading: React.FC = () => {
+  return (
+    <div
+      className="absolute z-50 top-0 left-0 flex items-center justify-center min-h-96 bg-gray-100 bg-opacity-50 w-full h-full pt-10 pb-20"
+      data-testid="loading"
+    >
+      <div className="absolute left-0 top-32 right-0 mx-auto w-52 text-center flex shadow-md rounded-full items-center px-4 overflow-hidden bg-white">
+        <LoadingIcon />
+        <span className="mx-3 text-indigo-900 font-semibold">Loading...</span>
+      </div>
+    </div>
+  );
 };
 
+const MemoizedLoading = memo(RenderLoading);
 const MemoizedHeader = memo(RenderHeader);
 const MemoizedBody = memo(RenderBody);
 
-export const Table = memo((props: TableProps) => {
-  const { columns, prefix, Wrapper } = props;
+export const Filter: React.FC<FilterProps> = (props) => {
+  const { ListFilterComponent, colClassName, gridClassName } = props;
+  return (
+    <FilterTable ListFilterComponent={ListFilterComponent} colClassName={colClassName} gridClassName={gridClassName} />
+  );
+};
+
+export function Table<R>(props: TableProps<R>): JSX.Element {
+  const { columns, Wrapper, render } = props;
+  const prefix = props.prefix ?? 'default';
   const loader = useRef(props.loader);
-  const [data, setData] = useState<Pagination<unknown> | null>(null);
+  const [data, setData] = useState<Pagination<R> | null>(null);
   const [err, setError] = useState<Error | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
   const location = useLocation();
@@ -132,11 +204,13 @@ export const Table = memo((props: TableProps) => {
       sort: objectSort,
     })
       .then((result) => {
+        setError(null);
         setData(result);
-        setLoading(false);
       })
       .catch((err: Error) => {
         setError(err);
+      })
+      .finally(() => {
         setLoading(false);
       });
   }, [loader, prefix, location]);
@@ -158,28 +232,16 @@ export const Table = memo((props: TableProps) => {
     return Wrapper ? <Wrapper children={<ErrorPage />} /> : <ErrorPage />;
   }
 
-  if ((data === null && err === null) || loading) {
-    const tmp = (
-      <div className="flex items-center justify-center mt-32 min-h-96 bg-white pt-10 pb-20" data-testid="loading">
-        <div className="flex shadow-md rounded-full items-center px-4 overflow-hidden">
-          <LoadingIcon />
-          <span className="mx-3 text-indigo-900 font-semibold">Loading...</span>
-        </div>
-      </div>
-    );
-
-    return Wrapper ? <Wrapper children={tmp} /> : tmp;
-  }
-
   const tmp = (
-    <div className="overflow-hidden" data-testid="table">
+    <div className="overflow-hidden bg-white relative" data-testid="table">
+      {((data === null && err === null) || loading) && <MemoizedLoading />}
       <div className="overflow-x-scroll">
         <table className="w-full table-auto mb-4">
           <thead>
             <MemoizedHeader columns={columns} prefix={prefix} />
           </thead>
           <tbody className="bg-gray-200 w-full">
-            <MemoizedBody data={data?.data} columns={columns} loader={loader.current} />
+            <MemoizedBody data={data?.data} columns={columns} render={render} />
           </tbody>
         </table>
       </div>
@@ -190,11 +252,4 @@ export const Table = memo((props: TableProps) => {
   );
 
   return Wrapper ? <Wrapper children={tmp} /> : tmp;
-});
-
-export const Filter: React.FC<FilterProps> = (props) => {
-  const { ListFilterComponent, colClassName, gridClassName } = props;
-  return (
-    <FilterTable ListFilterComponent={ListFilterComponent} colClassName={colClassName} gridClassName={gridClassName} />
-  );
-};
+}

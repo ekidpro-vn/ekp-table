@@ -10,7 +10,7 @@ export default {
   argTypes: {},
 } as Meta;
 
-const Template: Story<TableProps> = (args) => (
+const Template: Story<TableProps<DefaultDataType>> = (args) => (
   <div>
     {/* <Filter
       dataFilter={[
@@ -19,14 +19,18 @@ const Template: Story<TableProps> = (args) => (
         { FilterComponent: <div>ducnh</div> },
       ]}
     /> */}
-    <Table {...args} />
+    <Table
+      {...args}
+      render={(data, column) => {
+        return <span>{data[column.field]}</span>;
+      }}
+    />
   </div>
 );
 type DefaultDataType = {
   id: number;
   fullname: string;
   mobile: string;
-  email: string;
   address: string;
   status: string;
   created_at: string;
@@ -38,15 +42,14 @@ const ColumnsAdminList: ColumnsProps[] = [
   { field: 'mobile', title: 'PHONE' },
   { field: 'email', title: 'EMAIL' },
   { field: 'address', title: 'ADDRESS' },
-  { field: 'status', title: 'STATUS' },
-  { field: 'created_at', title: 'CREATED_AT' },
   { field: 'updated_at', title: 'UPDATED_AT' },
+  { field: 'action', title: 'ACTION' },
 ];
 const defaultLoader: Loader<DefaultDataType, { keyword: string }> = {
   fetch: (input) => {
     return new Promise((resolve) => {
       setTimeout(() => {
-        resolve();
+        resolve(1);
       }, 3000);
     }).then(() => {
       const items = [
@@ -105,19 +108,20 @@ const defaultLoader: Loader<DefaultDataType, { keyword: string }> = {
       const result: Pagination<DefaultDataType> = {
         data: items,
         pagination: {
-          currentPage: 1, // input.page,
-          perPage: 5, // input.size,
-          totalItems: 5,
-          totalPages: 1,
+          currentPage: 3, // input.page,
+          perPage: 10, // input.size,
+          totalItems: 92,
+          totalPages: 10,
         },
       };
 
       return result;
     });
   },
-  render: (data, field) => {
-    return <span>{data[field] ?? 'Unknown'}</span>;
-  },
+};
+
+const render = (data: DefaultDataType, column: ColumnsProps) => {
+  return <span>{data[column.field] ?? null}</span>;
 };
 
 export const DefaultTable = Template.bind({});

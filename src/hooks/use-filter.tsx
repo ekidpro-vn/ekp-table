@@ -22,7 +22,7 @@ export const useFilter = (prefix: string): ((params: Record<string, string | und
   );
 };
 
-export const getFilter = (prefix: string, parsed: queryString.ParsedQuery<string>): Record<string, unknown> => {
+export function getFilter(prefix: string, parsed: queryString.ParsedQuery<string>): Record<string, unknown> {
   let pf = prefix ?? '';
   if (prefix && /^[-a-zA-Z_]+$/g.test(prefix) === false) {
     pf = '';
@@ -40,4 +40,4 @@ export const getFilter = (prefix: string, parsed: queryString.ParsedQuery<string
     filter[filterKey] = value;
   }
   return filter;
-};
+}

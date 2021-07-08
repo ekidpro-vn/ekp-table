@@ -1,5 +1,5 @@
 import clsx from 'clsx';
-import React, { RefObject, useCallback, useEffect, useRef, useState } from 'react';
+import React, { FormEvent, RefObject, useCallback, useEffect, useRef, useState } from 'react';
 import { useFilter } from '../hooks';
 import { PaginationStyle } from '../styles/pagination.style';
 import { PageNumberProps, PageSizeDropdownProps, PaginationUIProps } from './types';
@@ -65,8 +65,8 @@ const PageNumber: React.FC<PageNumberProps> = (props) => {
 };
 
 const PageSizeDropdown: React.FC<PageSizeDropdownProps> = (props) => {
-  const { currentPage, totalItems, perPage } = props.pagination;
-  const setFilter = useFilter(props.prefix);
+  const { onSelectSize, pagination } = props;
+  const { currentPage, totalItems, perPage } = pagination;
   const [pageSize, setPageSize] = useState<number>(perPage);
   const [showSelectPageSize, setShowSelectPageSize] = useState<boolean>(false);
   const pageSizeDropdownRef = useRef<HTMLDivElement>(null);
@@ -87,14 +87,14 @@ const PageSizeDropdown: React.FC<PageSizeDropdownProps> = (props) => {
 
   const onSelectPageSize = useCallback(
     (item: { value: number; label: string }) => {
+      if (item.value === perPage) {
+        return;
+      }
       setPageSize(item.value);
-      setFilter({
-        page: `1`,
-        size: `${item.value}`,
-      });
+      onSelectSize(item.value);
       setShowSelectPageSize(false);
     },
-    [setFilter]
+    [perPage, onSelectSize]
   );
 
   const start = totalItems === 0 ? 0 : (currentPage - 1) * perPage + 1;
@@ -160,99 +160,124 @@ export const PaginationUI: React.FC<PaginationUIProps> = ({ data, prefix }) => {
   const setFilter = useFilter(prefix);
   const [inputNumber, setInputNumber] = useState<string>('');
 
+  const onSelectPage = useCallback(
+    (page: number, disabled: boolean) => {
+      if (data) {
+        if (disabled || page === data.pagination.currentPage) {
+          return;
+        }
+        setInputNumber('');
+        setFilter({
+          page: `${page}`,
+          size: `${data.pagination.perPage}`,
+        });
+      }
+    },
+    [data, setFilter]
+  );
+
+  const onSubmitPageNumber = useCallback(
+    (e: FormEvent<HTMLFormElement>) => {
+      if (data) {
+        e.preventDefault();
+        if (!inputNumber) {
+          return;
+        }
+        if (data.pagination.currentPage === Number(inputNumber)) {
+          return;
+        }
+        setFilter({
+          page: inputNumber,
+          size: `${data.pagination.perPage}`,
+        });
+      }
+    },
+    [data, inputNumber, setFilter]
+  );
+
+  const onSelectSize = useCallback(
+    (size: number) => {
+      setInputNumber('');
+      setFilter({
+        page: `1`,
+        size: `${size}`,
+      });
+    },
+    [setFilter]
+  );
+
   if (data === null) {
     return null;
   }
 
   const { pagination } = data;
-  const { currentPage, totalPages, perPage } = pagination;
+  const { currentPage, totalPages } = pagination;
+  const listPage: number[] = [];
 
-  const nums: number[] = [];
-
-  for (let idx = currentPage - 2; idx < currentPage; idx += 1) {
-    if (idx >= 1) {
-      nums.push(idx);
+  for (let i = currentPage - 2; i < currentPage + 3; i++) {
+    if (i > 0 && i <= totalPages && currentPage <= totalPages) {
+      if (currentPage < 3) {
+        listPage.push(i);
+      } else if (currentPage >= 3 && currentPage <= totalPages - 3) {
+        listPage.push(i);
+      } else if (currentPage > totalPages - 3) {
+        listPage.push(i);
+      }
     }
   }
-
-  for (let idx = currentPage; idx < currentPage + 2; idx += 1) {
-    if (idx > totalPages) {
-      break;
-    }
-
-    if (nums.length >= 5) {
-      break;
-    }
-
-    nums.push(idx);
-  }
-
-  const onSubmitPageNumber = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    setFilter({
-      page: inputNumber,
-      size: `${perPage}`,
-    });
-  };
-
-  const onSelectPage = (page: number, disabled: boolean) => {
-    !disabled &&
-      setFilter({
-        page: `${page}`,
-        size: `${perPage}`,
-      });
-  };
 
   return (
     <PaginationStyle>
       <div className="w-full h-full sm:flex sm:justify-between" data-testid="pagination">
         <div className="perpage-dropdown w-full sm:w-auto">
-          <PageSizeDropdown pagination={pagination} dataPageSize={dataPageSize} prefix={prefix} />
+          <PageSizeDropdown pagination={pagination} dataPageSize={dataPageSize} onSelectSize={onSelectSize} />
         </div>
-
-        <div className="page-number w-full sm:w-auto flex justify-center">
-          <PageNumber
-            page={1}
-            special="first"
-            disable={currentPage === 1}
-            onClick={() => onSelectPage(1, currentPage === 1)}
-          />
-          <PageNumber
-            page={currentPage - 1}
-            special="prev"
-            disable={currentPage === 1}
-            onClick={() => onSelectPage(currentPage - 1, currentPage === 1)}
-          />
-          {nums.map((idx) => (
+        <div className="page-number w-full sm:w-auto sm:flex justify-center">
+          <div className="flex justify-center items-center mb-5 sm:mb-0">
             <PageNumber
-              page={idx}
-              key={`page_${idx}`}
-              selected={currentPage === idx}
-              onClick={() => onSelectPage(idx, false)}
+              page={1}
+              special="first"
+              disable={currentPage === 1}
+              onClick={() => onSelectPage(1, currentPage === 1)}
             />
-          ))}
-          <span className="pt-3 block mx-1.5 text-lg">. . .</span>
-          <form onSubmit={(e) => onSubmitPageNumber(e)}>
-            <input
-              type="number"
-              className="page-number-input overflow-hidden rounded px-1 w-9 h-full border border-gray-300 hover:border-gray-400  focus:border-gray-400 duration-300"
-              value={inputNumber}
-              onChange={(e) => setInputNumber(e.target.value)}
+            <PageNumber
+              page={currentPage - 1}
+              special="prev"
+              disable={currentPage === 1}
+              onClick={() => onSelectPage(currentPage - 1, currentPage === 1)}
             />
-          </form>
-          <PageNumber
-            page={currentPage + 1}
-            special="next"
-            disable={currentPage >= totalPages}
-            onClick={() => onSelectPage(currentPage + 1, currentPage >= totalPages)}
-          />
-
-          <PageNumber
-            page={totalPages}
-            special="last"
-            disable={currentPage >= totalPages}
-            onClick={() => onSelectPage(totalPages, currentPage >= totalPages)}
-          />
+            {listPage.map((idx) => (
+              <PageNumber
+                page={idx}
+                key={`page_${idx}`}
+                selected={currentPage === idx}
+                onClick={() => onSelectPage(idx, false)}
+              />
+            ))}
+            <PageNumber
+              page={currentPage + 1}
+              special="next"
+              disable={currentPage >= totalPages}
+              onClick={() => onSelectPage(currentPage + 1, currentPage >= totalPages)}
+            />
+            <PageNumber
+              page={totalPages}
+              special="last"
+              disable={currentPage >= totalPages}
+              onClick={() => onSelectPage(totalPages, currentPage >= totalPages)}
+            />
+          </div>
+          <div className="flex items-center justify-center lg:mr-4 lg:ml-16">
+            <span className="block mr-3">Go to page</span>
+            <form onSubmit={onSubmitPageNumber}>
+              <input
+                type="number"
+                className="page-number-input overflow-hidden rounded-md text-center px-1 w-9 h-9 border border-gray-300 hover:border-gray-400  focus:border-gray-400 duration-300"
+                value={inputNumber}
+                onChange={(e) => setInputNumber(e.target.value)}
+              />
+            </form>
+          </div>
         </div>
       </div>
     </PaginationStyle>
