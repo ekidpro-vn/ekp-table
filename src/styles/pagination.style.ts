@@ -23,7 +23,6 @@ export const PaginationStyle = styled.div`
 
       height: 2.25rem;
       min-width: 2.25rem;
-      padding: 0.5rem;
 
       justify-content: center;
     }

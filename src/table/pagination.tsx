@@ -1,35 +1,71 @@
 import clsx from 'clsx';
-import React, { FormEvent, RefObject, useCallback, useEffect, useRef, useState } from 'react';
+import React, { FormEvent, memo, RefObject, useCallback, useEffect, useRef, useState } from 'react';
 import { useFilter } from '../hooks';
 import { PaginationStyle } from '../styles/pagination.style';
-import { PageNumberProps, PageSizeDropdownProps, PaginationUIProps } from './types';
+import { DataPagination, PageNumberProps, PageSizeDropdownProps, PaginationUIProps } from './types';
 
 const dataPageSize: { value: number; label: string }[] = [5, 10, 20, 50, 100].map((item) => {
   return { value: item, label: `${item}` };
 });
 
-const renderText = (selected?: boolean, special?: 'first' | 'prev' | 'next' | 'last') => {
+const ControlButton: React.FC<{ special?: 'first' | 'prev' | 'next' | 'last' }> = memo(({ special }) => {
   switch (special) {
     case 'first':
-      return 'fa fa-angle-double-left';
+      return (
+        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+          <path
+            fillRule="evenodd"
+            d="M15.707 15.707a1 1 0 01-1.414 0l-5-5a1 1 0 010-1.414l5-5a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 010 1.414zm-6 0a1 1 0 01-1.414 0l-5-5a1 1 0 010-1.414l5-5a1 1 0 011.414 1.414L5.414 10l4.293 4.293a1 1 0 010 1.414z"
+            clipRule="evenodd"
+          />
+        </svg>
+      );
 
     case 'prev':
-      return 'fa fa-angle-left';
+      return (
+        <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" viewBox="0 0 20 20" fill="currentColor">
+          <path
+            fillRule="evenodd"
+            d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z"
+            clipRule="evenodd"
+          />
+        </svg>
+      );
 
     case 'next':
-      return 'fa fa-angle-right';
+      return (
+        <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" viewBox="0 0 20 20" fill="currentColor">
+          <path
+            fillRule="evenodd"
+            d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
+            clipRule="evenodd"
+          />
+        </svg>
+      );
 
     case 'last':
-      return 'fa fa-angle-double-right';
+      return (
+        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+          <path
+            fillRule="evenodd"
+            d="M10.293 15.707a1 1 0 010-1.414L14.586 10l-4.293-4.293a1 1 0 111.414-1.414l5 5a1 1 0 010 1.414l-5 5a1 1 0 01-1.414 0z"
+            clipRule="evenodd"
+          />
+          <path
+            fillRule="evenodd"
+            d="M4.293 15.707a1 1 0 010-1.414L8.586 10 4.293 5.707a1 1 0 011.414-1.414l5 5a1 1 0 010 1.414l-5 5a1 1 0 01-1.414 0z"
+            clipRule="evenodd"
+          />
+        </svg>
+      );
 
     default:
       return null;
   }
-};
+});
 
 const PageNumber: React.FC<PageNumberProps> = (props) => {
   const { page, selected, special, disable, onClick } = props;
-  const faName = renderText(selected, special);
   return (
     <li
       onClick={onClick}
@@ -47,18 +83,12 @@ const PageNumber: React.FC<PageNumberProps> = (props) => {
         className={clsx({
           'text-gray-500 group-hover:text-white': !selected && !disable,
           'text-white': selected,
+          'w-5 h-5 overflow-hidden': true,
+          'p-0': special === 'prev' || special === 'next',
+          'p-2': special !== 'prev' && special !== 'next',
         })}
       >
-        {faName ? (
-          <i
-            className={`${faName} ${clsx({
-              'text-gray-500 group-hover:text-white': !selected && !disable,
-              'text-white': selected,
-            })}`}
-          />
-        ) : (
-          page
-        )}
+        {special ? <ControlButton special={special} /> : <span className="font-medium">{page}</span>}
       </div>
     </li>
   );
@@ -206,25 +236,45 @@ export const PaginationUI: React.FC<PaginationUIProps> = ({ data, prefix }) => {
     [setFilter]
   );
 
+  const getListPageNumber = useCallback((pagination: DataPagination) => {
+    const { currentPage, totalPages, perPage, totalItems } = pagination;
+
+    if (
+      !Number.isInteger(currentPage) ||
+      !Number.isInteger(totalPages) ||
+      !Number.isInteger(perPage) ||
+      !Number.isInteger(totalItems)
+    ) {
+      console.error('Pagination data must be a positive integer!');
+      return [0];
+    }
+
+    if (totalPages < 1 || currentPage < 1 || perPage < 1 || totalItems < 1) {
+      console.error('Pagination data must be a positive integer!');
+      return [0];
+    }
+
+    const listPage: number[] = [];
+    for (let i = currentPage - 2; i < currentPage + 3; i++) {
+      if (i > 0 && i <= totalPages && currentPage <= totalPages) {
+        if (currentPage < 3) {
+          listPage.push(i);
+        } else if (currentPage >= 3 && currentPage <= totalPages - 3) {
+          listPage.push(i);
+        } else if (currentPage > totalPages - 3) {
+          listPage.push(i);
+        }
+      }
+    }
+    return listPage;
+  }, []);
+
   if (data === null) {
     return null;
   }
 
   const { pagination } = data;
   const { currentPage, totalPages } = pagination;
-  const listPage: number[] = [];
-
-  for (let i = currentPage - 2; i < currentPage + 3; i++) {
-    if (i > 0 && i <= totalPages && currentPage <= totalPages) {
-      if (currentPage < 3) {
-        listPage.push(i);
-      } else if (currentPage >= 3 && currentPage <= totalPages - 3) {
-        listPage.push(i);
-      } else if (currentPage > totalPages - 3) {
-        listPage.push(i);
-      }
-    }
-  }
 
   return (
     <PaginationStyle>
@@ -246,7 +296,7 @@ export const PaginationUI: React.FC<PaginationUIProps> = ({ data, prefix }) => {
               disable={currentPage === 1}
               onClick={() => onSelectPage(currentPage - 1, currentPage === 1)}
             />
-            {listPage.map((idx) => (
+            {getListPageNumber(pagination).map((idx) => (
               <PageNumber
                 page={idx}
                 key={`page_${idx}`}
