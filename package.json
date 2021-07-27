@@ -1,9 +1,9 @@
 {
   "name": "@ekidpro/table",
-  "version": "1.2.6",
+  "version": "1.2.7",
   "main": "./build/index.js",
   "module": "./build/index.es.js",
-  "files": [
+  "files": [  
     "build"
   ],
   "scripts": {
