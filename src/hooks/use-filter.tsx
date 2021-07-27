@@ -47,14 +47,16 @@ function useUpdateFilterOnHooks(prefix = '') {
           continue;
         }
 
+        const arrValue = Array.isArray(value) ? value : [value];
+
         // if we have an array, we will append to it
         if (Array.isArray(tmp)) {
-          parsed[urlQueryName] = [...tmp, value];
+          parsed[urlQueryName] = [...tmp, ...arrValue];
           continue;
         }
 
         // change param to array
-        parsed[urlQueryName] = [tmp, value];
+        parsed[urlQueryName] = [tmp, ...arrValue];
       }
 
       history.push({
