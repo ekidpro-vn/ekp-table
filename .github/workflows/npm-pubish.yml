@@ -6,6 +6,7 @@ on:
 jobs:
   publish:
     runs-on: ubuntu-latest
+    if: "startsWith(github.event.head_commit.message, '[RELEASE]')"
     steps:
       - uses: actions/checkout@master
       - uses: actions/setup-node@v1
