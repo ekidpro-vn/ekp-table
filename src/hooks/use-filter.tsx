@@ -27,36 +27,86 @@ function useGetFilterOnHooks(prefix = '', key?: string): Record<string, StringOr
     return filter[key];
   }
 
-  console.log(300, filter);
-
   return filter;
 }
 
-function useUpdateFilterOnHooks(prefix = '') {
+function useUpdateFilterOnHooks(prefix = '', filterKey?: string) {
   const history = useHistory();
+  const { search } = useLocation();
 
   const setFilter = useCallback(
-    (params: Record<string, string | string[] | undefined>) => {
-      const parsed = queryString.parse(window.location.search);
+    (params: string | string[] | Record<string, string | string[] | undefined> | undefined) => {
+      let parsed = queryString.parse(search);
 
+      // Clear all filter
+      if (typeof params === 'undefined') {
+        if (typeof filterKey !== 'undefined') {
+          // delete 1 field
+          const key = prefix === '' ? filterKey : `${prefix}_${filterKey}`;
+          parsed[key] = undefined;
+        } else {
+          // delete all
+          parsed = {};
+        }
+
+        history.push({
+          pathname: window.location.pathname,
+          search: queryString.stringify(parsed),
+        });
+
+        return;
+      }
+
+      // update 1 field values
+      if (typeof params === 'string' || Array.isArray(params)) {
+        if (typeof filterKey === 'undefined') {
+          console.warn(`You can't set value for filter without specific a key. Do nothing to prevent crash`);
+          return;
+        }
+
+        const key = prefix === '' ? filterKey : `${prefix}_${filterKey}`;
+        parsed[key] = params;
+
+        history.push({
+          pathname: window.location.pathname,
+          search: queryString.stringify(parsed),
+        });
+
+        return;
+      }
+
+      // update for object
       for (const [key, value] of Object.entries(params)) {
         const urlQueryName = prefix !== '' ? `${prefix}_${key}` : key;
-        const tmp = parsed[urlQueryName];
-        if (typeof tmp === 'undefined' || tmp === null) {
-          parsed[urlQueryName] = value || null;
+
+        if (typeof value === 'undefined') {
+          // clear key
+          parsed[urlQueryName] = undefined;
           continue;
         }
 
-        const arrValue = Array.isArray(value) ? value : [value];
+        // we clear all previous filter to add new filter
+        // we already think about append data to current search
+        // but it seem a bad solution with a lot of state on append/replace
+        // maybe we can do it in the future with below code
+        parsed[urlQueryName] = value;
 
-        // if we have an array, we will append to it
-        if (Array.isArray(tmp)) {
-          parsed[urlQueryName] = [...tmp, ...arrValue];
-          continue;
-        }
+        // const tmp = parsed[urlQueryName];
+        // if (typeof tmp === 'undefined' || tmp === null) {
+        //   parsed[urlQueryName] = value;
+        //   continue;
+        // }
 
-        // change param to array
-        parsed[urlQueryName] = [tmp, ...arrValue];
+        // const arrValue = Array.isArray(value) ? value : [value];
+
+        // // if we have an array, we will append to it
+        // if (Array.isArray(tmp)) {
+        //   parsed[urlQueryName] = [...tmp, ...arrValue];
+        //   continue;
+        // }
+
+        // // change param to array
+        // parsed[urlQueryName] = [tmp, ...arrValue];
       }
 
       history.push({
@@ -64,7 +114,7 @@ function useUpdateFilterOnHooks(prefix = '') {
         search: queryString.stringify(parsed),
       });
     },
-    [history, prefix]
+    [history, prefix, filterKey, search]
   );
 
   return setFilter;
@@ -75,7 +125,7 @@ export const useTableFilter = (
   key?: string
 ): [ReturnType<typeof useGetFilterOnHooks>, ReturnType<typeof useUpdateFilterOnHooks>] => {
   const getValue = useGetFilterOnHooks(prefix, key);
-  const setValue = useUpdateFilterOnHooks(prefix);
+  const setValue = useUpdateFilterOnHooks(prefix, key);
   return [getValue, setValue];
 };
 

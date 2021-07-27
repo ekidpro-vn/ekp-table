@@ -9,24 +9,49 @@ export default {
 
 function TableWithRouter(args: TableProps<DefaultDataType>) {
   const [filter, setFilter] = useTableFilter(args.prefix);
+  const [filterWithKey, setFilterWithKey] = useTableFilter(args.prefix, 'another_filter_key');
 
   return (
     <div className="flex flex-col space-y-3">
-      <div className="p-4 bg-gray-300">
-        <span>Filter:</span>
-        <div>{JSON.stringify(filter)}</div>
+      <div className="p-4 bg-gray-300 flex flex-row space-x-4">
+        <div>
+          <span>Filter:</span>
+          <div>{JSON.stringify(filter)}</div>
+        </div>
+
+        <div>
+          <span>Filter with key:</span>
+          <div>{JSON.stringify(filterWithKey)}</div>
+        </div>
       </div>
 
-      <button className="bg-blue-500 text-white px-4 py-2 rounded" onClick={() => setFilter({ name: 'Nguyễn Văn C' })}>
-        Set filter name = 'Nguyễn Văn C'
-      </button>
+      <div className="flex flex-row space-x-2">
+        <button
+          className="bg-blue-500 text-white px-4 py-2 rounded"
+          onClick={() => setFilter({ name: 'Nguyễn Văn C' })}
+        >
+          Set filter name = 'Nguyễn Văn C'
+        </button>
 
-      <button
-        className="bg-blue-500 text-white px-4 py-2 rounded"
-        onClick={() => setFilter({ name: ['Nguyễn Văn A', 'Nguyễn Văn D'] })}
-      >
-        Set filter name = 'Nguyễn Văn A' || 'Nguyễn Văn D'
-      </button>
+        <button
+          className="bg-blue-500 text-white px-4 py-2 rounded"
+          onClick={() => setFilter({ name: ['Nguyễn Văn A', 'Nguyễn Văn D'] })}
+        >
+          Set filter name = 'Nguyễn Văn A' || 'Nguyễn Văn D'
+        </button>
+
+        <button className="bg-red-500 text-white px-4 py-2 rounded" onClick={() => setFilterWithKey('Nguyễn Văn C')}>
+          Set filter with key = 'Nguyễn Văn C'
+        </button>
+
+        <button
+          className="bg-red-500 text-white px-4 py-2 rounded"
+          onClick={() => setFilterWithKey(['Nguyễn Văn A', 'Nguyễn Văn D'])}
+        >
+          Set filter with key = 'Nguyễn Văn A' || 'Nguyễn Văn D'
+        </button>
+      </div>
+
       <Table
         {...args}
         render={(data, column) => {
@@ -67,8 +92,7 @@ type DefaultDataType = {
 
 const defaultLoader: Loader<DefaultDataType, { keyword: string; name?: string | string[] }> = {
   fetch: (input) => {
-    console.log(66, input);
-
+    console.log(999, input);
     return new Promise((resolve) => {
       setTimeout(() => {
         resolve(1);
