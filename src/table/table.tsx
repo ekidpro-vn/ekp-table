@@ -110,19 +110,19 @@ function RenderBody<R>(props: BodyProps<R>): JSX.Element {
   const { columns, render, data } = props;
 
   if (!data) {
-    return <td colSpan={columns.length} className="w-full h-80 relative bg-gray-50" data-testid="empty"></td>;
+    return <tr className="w-full h-80 relative bg-gray-50" data-testid="empty"></tr>;
   }
 
   if (!Array.isArray(data) || data.length === 0) {
     return (
-      <td colSpan={columns.length} className="w-full h-80 relative bg-gray-50" data-testid="empty">
+      <tr className="w-full h-80 relative bg-gray-50" data-testid="empty">
         <div className="w-full flex items-center justify-center">
           <div className="flex items-center">
             <NoDataIcon />
             <span className="block ml-10 font-semibold text-lg uppercase text-indigo-800">No data</span>
           </div>
         </div>
-      </td>
+      </tr>
     );
   }
 
