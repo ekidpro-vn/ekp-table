@@ -26,7 +26,7 @@ function TableWithRouter(args: TableProps<DefaultDataType>) {
       </div>
 
       <div className="flex flex-row space-x-2">
-        <button className="bg-red-500 text-white px-4 py-2 rounded" onClick={() => setFilterWithKey('Nguyễn Văn C')}>
+        <button className="bg-red-500 text-white px-4 py-2 rounded" onClick={() => setFilterWithKey(['Nguyễn Văn C'])}>
           Set filter with key = 'Nguyễn Văn C'
         </button>
 
