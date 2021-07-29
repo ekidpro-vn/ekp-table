@@ -34,42 +34,18 @@ export function useFilterParams(prefix = ''): Record<string, string[]> {
   return filter;
 }
 
-function useUpdateFilterOnHooks(prefix = '', filterKey?: string) {
+function useUpdateFilterOnHooks(prefix = '', filterKey: string) {
   const history = useHistory();
   const { search } = useLocation();
 
   const setFilter = useCallback(
-    (params: string | string[] | Record<string, string | string[] | undefined> | undefined) => {
-      let parsed = queryString.parse(search);
+    (params: string[] | undefined) => {
+      const parsed = queryString.parse(search);
 
       // Clear all filter
       if (typeof params === 'undefined') {
-        if (typeof filterKey !== 'undefined') {
-          // delete 1 field
-          const key = prefix === '' ? filterKey : `${prefix}_${filterKey}`;
-          parsed[key] = undefined;
-        } else {
-          // delete all
-          parsed = {};
-        }
-
-        history.push({
-          pathname: window.location.pathname,
-          search: queryString.stringify(parsed),
-        });
-
-        return;
-      }
-
-      // update 1 field values
-      if (typeof params === 'string' || Array.isArray(params)) {
-        if (typeof filterKey === 'undefined') {
-          console.warn(`You can't set value for filter without specific a key. Do nothing to prevent crash`);
-          return;
-        }
-
         const key = prefix === '' ? filterKey : `${prefix}_${filterKey}`;
-        parsed[key] = params;
+        parsed[key] = undefined;
 
         history.push({
           pathname: window.location.pathname,
@@ -79,39 +55,8 @@ function useUpdateFilterOnHooks(prefix = '', filterKey?: string) {
         return;
       }
 
-      // update for object
-      for (const [key, value] of Object.entries(params)) {
-        const urlQueryName = prefix !== '' ? `${prefix}_${key}` : key;
-
-        if (typeof value === 'undefined') {
-          // clear key
-          parsed[urlQueryName] = undefined;
-          continue;
-        }
-
-        // we clear all previous filter to add new filter
-        // we already think about append data to current search
-        // but it seem a bad solution with a lot of state on append/replace
-        // maybe we can do it in the future with below code
-        parsed[urlQueryName] = value;
-
-        // const tmp = parsed[urlQueryName];
-        // if (typeof tmp === 'undefined' || tmp === null) {
-        //   parsed[urlQueryName] = value;
-        //   continue;
-        // }
-
-        // const arrValue = Array.isArray(value) ? value : [value];
-
-        // // if we have an array, we will append to it
-        // if (Array.isArray(tmp)) {
-        //   parsed[urlQueryName] = [...tmp, ...arrValue];
-        //   continue;
-        // }
-
-        // // change param to array
-        // parsed[urlQueryName] = [tmp, ...arrValue];
-      }
+      const key = prefix === '' ? filterKey : `${prefix}_${filterKey}`;
+      parsed[key] = params;
 
       history.push({
         pathname: window.location.pathname,
