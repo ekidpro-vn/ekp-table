@@ -1,5 +1,5 @@
 import { Meta, Story } from '@storybook/react';
-import { ColumnsProps, Loader, Pagination, Table, TableProps, useTableFilter } from '../src';
+import { ColumnsProps, Loader, Pagination, Table, TableProps, useFilterParams, useTableFilter } from '../src';
 
 export default {
   title: 'Example/Filter',
@@ -8,7 +8,7 @@ export default {
 } as Meta;
 
 function TableWithRouter(args: TableProps<DefaultDataType>) {
-  const [filter, setFilter] = useTableFilter(args.prefix);
+  const filter = useFilterParams(args.prefix);
   const [filterWithKey, setFilterWithKey] = useTableFilter(args.prefix, 'another_filter_key');
 
   return (
@@ -26,20 +26,6 @@ function TableWithRouter(args: TableProps<DefaultDataType>) {
       </div>
 
       <div className="flex flex-row space-x-2">
-        <button
-          className="bg-blue-500 text-white px-4 py-2 rounded"
-          onClick={() => setFilter({ name: 'Nguyễn Văn C' })}
-        >
-          Set filter name = 'Nguyễn Văn C'
-        </button>
-
-        <button
-          className="bg-blue-500 text-white px-4 py-2 rounded"
-          onClick={() => setFilter({ name: ['Nguyễn Văn A', 'Nguyễn Văn D'] })}
-        >
-          Set filter name = 'Nguyễn Văn A' || 'Nguyễn Văn D'
-        </button>
-
         <button className="bg-red-500 text-white px-4 py-2 rounded" onClick={() => setFilterWithKey('Nguyễn Văn C')}>
           Set filter with key = 'Nguyễn Văn C'
         </button>

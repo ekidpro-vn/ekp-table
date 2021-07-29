@@ -2,12 +2,10 @@ import queryString from 'query-string';
 import { useCallback } from 'react';
 import { useHistory, useLocation } from 'react-router-dom';
 
-type StringOrArray = string | string[];
-
-function useGetFilterOnHooks(prefix = '', key?: string): Record<string, StringOrArray> | StringOrArray {
+export function useFilterParams(prefix = ''): Record<string, string[]> {
   const location = useLocation();
   const currentSearch = queryString.parse(location.search);
-  const filter: Record<string, string | string[]> = {};
+  const filter: Record<string, string[]> = {};
 
   for (const [key, value] of Object.entries(currentSearch)) {
     if (!key.startsWith(prefix)) {
@@ -16,16 +14,22 @@ function useGetFilterOnHooks(prefix = '', key?: string): Record<string, StringOr
 
     const filterKey = prefix === '' ? key : key.replace(`${prefix}_`, '');
 
-    if (['page', 'size', 'sort'].includes(filterKey)) {
+    if (['page', 'size', 'sort'].includes(key)) {
       continue;
     }
 
-    filter[filterKey] = value;
+    const valueInArray = Array.isArray(value) ? value : [value];
+
+    if (typeof filter[filterKey] === 'undefined') {
+      filter[filterKey] = valueInArray;
+    } else {
+      filter[filterKey] = [...filter[filterKey], ...valueInArray];
+    }
   }
 
-  if (key) {
-    return filter[key];
-  }
+  // if (key) {
+  //   return filter[key] as T extends string ? StringOrArray : Record<string, StringOrArray>;
+  // }
 
   return filter;
 }
@@ -122,11 +126,19 @@ function useUpdateFilterOnHooks(prefix = '', filterKey?: string) {
 
 export const useTableFilter = (
   prefix = '',
-  key?: string
-): [ReturnType<typeof useGetFilterOnHooks>, ReturnType<typeof useUpdateFilterOnHooks>] => {
-  const getValue = useGetFilterOnHooks(prefix, key);
+  key: string
+): [string[] | undefined, ReturnType<typeof useUpdateFilterOnHooks>] => {
+  const total = useFilterParams(prefix);
   const setValue = useUpdateFilterOnHooks(prefix, key);
-  return [getValue, setValue];
+
+  const filterKey = prefix === '' ? key : `${prefix}_${key}`;
+  const current = total[filterKey];
+
+  if (typeof current === 'undefined') {
+    return [undefined, setValue];
+  }
+
+  return [current, setValue];
 };
 
 export const useFilter = (prefix: string): ((params: Record<string, string | undefined>) => void) => {
