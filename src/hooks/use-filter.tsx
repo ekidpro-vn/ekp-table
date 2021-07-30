@@ -75,9 +75,7 @@ export const useTableFilter = (
 ): [string[] | undefined, ReturnType<typeof useUpdateFilterOnHooks>] => {
   const total = useFilterParams(prefix);
   const setValue = useUpdateFilterOnHooks(prefix, key);
-
-  const filterKey = prefix === '' ? key : `${prefix}_${key}`;
-  const current = total[filterKey];
+  const current = total[key];
 
   if (typeof current === 'undefined') {
     return [undefined, setValue];
