@@ -144,7 +144,20 @@ const PageSizeDropdown: React.FC<PageSizeDropdownProps> = (props) => {
         <span className={`${showSelectPageSize ? 'text-white' : 'text-gray-500'} ekp-pagination-dropdown-label mr-3`}>
           {pageSize}
         </span>
-        <i className={`fas fa-chevron-down text-sm ${showSelectPageSize ? 'text-white' : 'text-gray-500'}`}></i>
+        <span
+          className={clsx({
+            'text-white': showSelectPageSize,
+            'text-gray-500 arrow-down': !showSelectPageSize,
+          })}
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+            <path
+              fillRule="evenodd"
+              d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
+              clipRule="evenodd"
+            />
+          </svg>
+        </span>
         {showSelectPageSize && (
           <div>
             <div className="absolute left-0 bg-white overflow-hidden perpage-options w-full z-20">
@@ -236,38 +249,44 @@ export const PaginationUI: React.FC<PaginationUIProps> = ({ data, prefix }) => {
     [setFilter]
   );
 
-  const getListPageNumber = useCallback((pagination: DataPagination) => {
-    const { currentPage, totalPages, perPage, totalItems } = pagination;
+  const getListPageNumber = useCallback(
+    (pagination: DataPagination) => {
+      const { currentPage, totalPages, perPage, totalItems } = pagination;
+      const { data: dataTable } = data;
 
-    if (
-      !Number.isInteger(currentPage) ||
-      !Number.isInteger(totalPages) ||
-      !Number.isInteger(perPage) ||
-      !Number.isInteger(totalItems)
-    ) {
-      console.error('Pagination data must be a positive integer!');
-      return [0];
-    }
+      if (dataTable && dataTable.length > 0) {
+        if (
+          !Number.isInteger(currentPage) ||
+          !Number.isInteger(totalPages) ||
+          !Number.isInteger(perPage) ||
+          !Number.isInteger(totalItems)
+        ) {
+          console.error('Pagination data must be a positive integer!');
+          return [0];
+        }
 
-    if (totalPages < 1 || currentPage < 1 || perPage < 1 || totalItems < 1) {
-      console.error('Pagination data must be a positive integer!');
-      return [0];
-    }
-
-    const listPage: number[] = [];
-    for (let i = currentPage - 2; i < currentPage + 3; i++) {
-      if (i > 0 && i <= totalPages && currentPage <= totalPages) {
-        if (currentPage < 3) {
-          listPage.push(i);
-        } else if (currentPage >= 3 && currentPage <= totalPages - 3) {
-          listPage.push(i);
-        } else if (currentPage > totalPages - 3) {
-          listPage.push(i);
+        if (totalPages < 1 || currentPage < 1 || perPage < 1 || totalItems < 1) {
+          console.error('Pagination data must be a positive integer!');
+          return [0];
         }
       }
-    }
-    return listPage;
-  }, []);
+
+      const listPage: number[] = [];
+      for (let i = currentPage - 2; i < currentPage + 3; i++) {
+        if (i > 0 && i <= totalPages && currentPage <= totalPages) {
+          if (currentPage < 3) {
+            listPage.push(i);
+          } else if (currentPage >= 3 && currentPage <= totalPages - 3) {
+            listPage.push(i);
+          } else if (currentPage > totalPages - 3) {
+            listPage.push(i);
+          }
+        }
+      }
+      return listPage;
+    },
+    [data]
+  );
 
   if (data === null) {
     return null;
