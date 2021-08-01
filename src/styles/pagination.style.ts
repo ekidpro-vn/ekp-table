@@ -33,7 +33,7 @@ export const PaginationStyle = styled.div`
       color: #fff !important;
       transition: 0.3s;
     }
-    i {
+    .arrow-down {
       color: #fff !important;
       transition: 0.3s;
     }
