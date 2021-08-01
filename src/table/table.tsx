@@ -3,11 +3,13 @@ import { get } from 'lodash';
 import queryString from 'query-string';
 import React, { memo, useCallback, useEffect, useRef, useState } from 'react';
 import { useLocation } from 'react-router-dom';
+import useDragScroll from 'use-drag-scroll';
 import { LoadingIcon } from '../assets/loading';
 import { NoDataIcon } from '../assets/nodata-icon';
 import { getFilter } from '../hooks/use-filter';
 import { parsedSort, SortValue, useSort } from '../hooks/use-sort';
 import { add, remove } from '../store/loader-inventory';
+import { TableStyle } from '../styles/table.style';
 import { ErrorPage } from './error';
 import { FilterTable } from './filter';
 import { PaginationUI } from './pagination';
@@ -180,8 +182,23 @@ export function Table<R>(props: TableProps<R>): JSX.Element {
   const loader = useRef(props.loader);
   const [data, setData] = useState<Pagination<R> | null>(null);
   const [err, setError] = useState<Error | null>(null);
+  const [showScrollX, setShowScrollX] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
   const location = useLocation();
+  const wrapTableRef = useRef<HTMLDivElement>(null);
+  const tableRef = useRef<HTMLTableElement>(null);
+
+  useDragScroll({
+    sliderRef: wrapTableRef,
+  });
+
+  useEffect(() => {
+    if (wrapTableRef && wrapTableRef.current && tableRef && tableRef.current) {
+      const tableWidth = tableRef.current.clientWidth;
+      const wrapTableWidth = wrapTableRef.current.clientWidth;
+      setShowScrollX(tableWidth > wrapTableWidth);
+    }
+  }, []);
 
   const getDataFromRemoteServer = useCallback(() => {
     setLoading(true);
@@ -233,7 +250,7 @@ export function Table<R>(props: TableProps<R>): JSX.Element {
   }
 
   const tmp = (
-    <div
+    <TableStyle
       className={clsx({
         'overflow-hidden relative': true,
         'bg-white': !loading,
@@ -241,8 +258,14 @@ export function Table<R>(props: TableProps<R>): JSX.Element {
       data-testid="table"
     >
       {((data === null && err === null) || loading) && <MemoizedLoading />}
-      <div className="overflow-x-scroll">
-        <table className="w-full table-auto mb-4">
+      <div
+        className={clsx({
+          'wrap-table': true,
+          'overflow-x-scroll': showScrollX,
+        })}
+        ref={wrapTableRef}
+      >
+        <table className="w-full table-auto mb-4" ref={tableRef}>
           <thead>
             <MemoizedHeader columns={columns} prefix={prefix} />
           </thead>
@@ -259,7 +282,7 @@ export function Table<R>(props: TableProps<R>): JSX.Element {
       <div className="my-8 h-19 sm:h-9 w-full">
         <PaginationUI data={data} prefix={prefix} />
       </div>
-    </div>
+    </TableStyle>
   );
 
   return Wrapper ? <Wrapper children={tmp} /> : tmp;
