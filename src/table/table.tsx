@@ -115,13 +115,13 @@ function RenderBody<R>(props: BodyProps<R>): JSX.Element {
 
   if (!Array.isArray(data) || data.length === 0) {
     return (
-      <tr className="w-full h-80 relative bg-gray-50" data-testid="empty">
-        <div className="w-full flex items-center justify-center">
+      <tr className="w-full h-80 relative" data-testid="empty">
+        <td className="w-full flex items-center justify-center fixed top-48 left-0 right-0 mx-auto">
           <div className="flex items-center">
             <NoDataIcon />
-            <span className="block ml-10 font-semibold text-lg uppercase text-indigo-800">No data</span>
+            <span className="block ml-10 font-bold text-2xl uppercase text-gray-400">No data</span>
           </div>
-        </div>
+        </td>
       </tr>
     );
   }
@@ -155,9 +155,9 @@ const RenderLoading: React.FC = () => {
       className="absolute z-50 top-0 left-0 flex items-center justify-center min-h-96 bg-gray-100 bg-opacity-50 w-full h-full pt-10 pb-20"
       data-testid="loading"
     >
-      <div className="absolute left-0 top-32 right-0 mx-auto w-52 text-center flex shadow-md rounded-full items-center px-4 overflow-hidden bg-white">
+      <div className="absolute left-0 top-44 right-0 mx-auto w-52 text-center flex shadow-md rounded-full items-center justify-center px-4 overflow-hidden bg-white py-2.5">
         <LoadingIcon />
-        <span className="mx-3 text-indigo-900 font-semibold">Loading...</span>
+        <span className="ml-3 text-indigo-900 font-semibold">Loading...</span>
       </div>
     </div>
   );
@@ -233,14 +233,25 @@ export function Table<R>(props: TableProps<R>): JSX.Element {
   }
 
   const tmp = (
-    <div className="overflow-hidden bg-white relative" data-testid="table">
+    <div
+      className={clsx({
+        'overflow-hidden relative': true,
+        'bg-white': !loading,
+      })}
+      data-testid="table"
+    >
       {((data === null && err === null) || loading) && <MemoizedLoading />}
       <div className="overflow-x-scroll">
         <table className="w-full table-auto mb-4">
           <thead>
             <MemoizedHeader columns={columns} prefix={prefix} />
           </thead>
-          <tbody className="bg-gray-200 w-full">
+          <tbody
+            className={clsx({
+              'w-full': true,
+              'bg-gray-200': !!(data?.data && data?.data.length > 0),
+            })}
+          >
             <MemoizedBody data={data?.data} columns={columns} render={render} />
           </tbody>
         </table>

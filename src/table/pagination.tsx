@@ -252,7 +252,7 @@ export const PaginationUI: React.FC<PaginationUIProps> = ({ data, prefix }) => {
   const getListPageNumber = useCallback(
     (pagination: DataPagination) => {
       const { currentPage, totalPages, perPage, totalItems } = pagination;
-      const { data: dataTable } = data;
+      const dataTable = data?.data || [];
 
       if (dataTable && dataTable.length > 0) {
         if (
