@@ -13,7 +13,7 @@ export default {
 const Template: Story<TableProps<DefaultDataType>> = (args) => (
   <div>
     {/* <Filter
-      dataFilter={[
+      ListFilterComponent={[
         { FilterComponent: <div>ducnh</div> },
         { FilterComponent: <div>ducnh</div> },
         { FilterComponent: <div>ducnh</div> },

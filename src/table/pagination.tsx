@@ -135,13 +135,21 @@ const PageSizeDropdown: React.FC<PageSizeDropdownProps> = (props) => {
   return (
     <div className="flex items-center sm:ml-3 justify-center mb-5 sm:mb-0">
       <div
-        className={`${
-          showSelectPageSize ? 'bg-blue-500' : 'bg-gray-200'
-        } ekp-pagination-dropdown relative cursor-pointer rounded inline-flex sm:flex items-center px-4 h-9 hover:bg-blue-500 duration-300`}
+        className={clsx({
+          'ekp-pagination-dropdown relative cursor-pointer rounded inline-flex sm:flex items-center px-4 h-9 hover:bg-blue-500 duration-300': true,
+          'bg-blue-500': showSelectPageSize,
+          'bg-gray-200': !showSelectPageSize,
+        })}
         onClick={() => setShowSelectPageSize(!showSelectPageSize)}
         ref={pageSizeDropdownRef}
       >
-        <span className={`${showSelectPageSize ? 'text-white' : 'text-gray-500'} ekp-pagination-dropdown-label mr-3`}>
+        <span
+          className={clsx({
+            'ekp-pagination-dropdown-label mr-2': true,
+            'text-white': showSelectPageSize,
+            'text-gray-500': !showSelectPageSize,
+          })}
+        >
           {pageSize}
         </span>
         <span
@@ -177,12 +185,18 @@ const PageSizeDropdown: React.FC<PageSizeDropdownProps> = (props) => {
                   return (
                     <div
                       key={`perpage_${item.value}`}
-                      className={`${
-                        pageSize === item.value ? 'bg-blue-500' : ''
-                      } group py-1 px-4 rounded-sm border border-t-0 border-l-0 border-r-0 border-white hover:bg-blue-500`}
+                      className={clsx({
+                        'group py-1 px-4 rounded-sm border border-t-0 border-l-0 border-r-0 border-white hover:bg-blue-500': true,
+                        'bg-blue-500': pageSize === item.value,
+                      })}
                       onClick={() => onSelectPageSize(item)}
                     >
-                      <span className={`${pageSize === item.value ? 'text-white' : ''} group-hover:text-white`}>
+                      <span
+                        className={clsx({
+                          'group-hover:text-white': true,
+                          'text-white': pageSize === item.value,
+                        })}
+                      >
                         {item.label}
                       </span>
                     </div>
