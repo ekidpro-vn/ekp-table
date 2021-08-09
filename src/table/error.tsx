@@ -14,9 +14,9 @@ export const ErrorPage: React.FC<{ messages?: string }> = ({ messages }) => {
             <span className="block text-gray-700 mt-8 text-xl">{messages}</span>
           ) : (
             <span className="block text-gray-700 mt-8 text-xl">
-              Looks like our server crashed !
+              Looks like you passed some wrong data!
               <br />
-              We're working on a quick fix, come back soon.
+              Please check the data passed into the table.
             </span>
           )}
         </div>

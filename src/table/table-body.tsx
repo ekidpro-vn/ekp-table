@@ -35,7 +35,7 @@ function Body<R>(props: BodyProps<R>): JSX.Element {
             {columns.map((item2, index) => {
               return (
                 <td key={`column_${item2.field}_${index}`} className="p-5">
-                  {render ? render(item, item2) : get(item, `${item2.field}`)}
+                  <div className="w-max">{render ? render(item, item2) : get(item, `${item2.field}`)}</div>
                 </td>
               );
             })}
