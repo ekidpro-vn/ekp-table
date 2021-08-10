@@ -78,11 +78,9 @@ const ThHeader: React.FC<{ prefix: string; item: ColumnsProps }> = memo((props) 
       key={`title_${item.title}`}
       onClick={item.canSort ? onFilterSort : undefined}
     >
-      <div className="w-max">
-        <div className="flex items-center">
-          <span className="block text-gray-900 font-extrabold">{item.title}</span>
-          {item.canSort && <SortIcon field={item.field} prefix={prefix} />}
-        </div>
+      <div className="flex items-center">
+        <span className="block text-gray-900 font-extrabold">{item.title}</span>
+        {item.canSort && <SortIcon field={item.field} prefix={prefix} />}
       </div>
     </th>
   );
