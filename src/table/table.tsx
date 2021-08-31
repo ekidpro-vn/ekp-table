@@ -94,7 +94,7 @@ export function Table<R>(props: TableProps<R>): JSX.Element {
   const tmp = (
     <TableStyle
       className={clsx({
-        'overflow-hidden relative': true,
+        relative: true,
         'bg-white': !loading,
       })}
       data-testid="table"
