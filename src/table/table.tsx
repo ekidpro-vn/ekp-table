@@ -29,6 +29,7 @@ export function Table<R>(props: TableProps<R>): JSX.Element {
   const [err, setError] = useState<Error | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
   const location = useLocation();
+
   // const wrapTableRef = useRef<HTMLDivElement>(null);
   // const tableRef = useRef<HTMLTableElement>(null);
   // const [showScrollX, setShowScrollX] = useState<boolean>(false);
