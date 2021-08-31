@@ -58,7 +58,7 @@ function useUpdateFilterOnHooks(prefix = '', filterKey: string) {
       const key = prefix === '' ? filterKey : `${prefix}_${filterKey}`;
 
       parsed[key] = params;
-      if (filterKey !== 'page') {
+      if (parsed.page && filterKey !== 'page') {
         parsed.page = '1';
       }
 
