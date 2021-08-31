@@ -136,7 +136,8 @@ const PageSizeDropdown: React.FC<PageSizeDropdownProps> = (props) => {
     <div className="flex items-center sm:ml-3 justify-center mb-5 sm:mb-0">
       <div
         className={clsx({
-          'ekp-pagination-dropdown relative cursor-pointer rounded inline-flex sm:flex items-center px-4 h-9 hover:bg-blue-500 duration-300': true,
+          'ekp-pagination-dropdown relative cursor-pointer rounded inline-flex sm:flex items-center px-4 h-9 hover:bg-blue-500 duration-300':
+            true,
           'bg-blue-500': showSelectPageSize,
           'bg-gray-200': !showSelectPageSize,
         })}
@@ -186,7 +187,8 @@ const PageSizeDropdown: React.FC<PageSizeDropdownProps> = (props) => {
                     <div
                       key={`perpage_${item.value}`}
                       className={clsx({
-                        'group py-1 px-4 rounded-sm border border-t-0 border-l-0 border-r-0 border-white hover:bg-blue-500': true,
+                        'group py-1 px-4 rounded-sm border border-t-0 border-l-0 border-r-0 border-white hover:bg-blue-500':
+                          true,
                         'bg-blue-500': pageSize === item.value,
                       })}
                       onClick={() => onSelectPageSize(item)}
@@ -302,7 +304,7 @@ export const PaginationUI: React.FC<PaginationUIProps> = ({ data, prefix }) => {
     [data]
   );
 
-  if (data === null) {
+  if (!data || (data.pagination && data.pagination.totalPages && data.pagination.totalPages < 2)) {
     return null;
   }
 
