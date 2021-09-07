@@ -47,7 +47,6 @@ export function Table<R>(props: TableProps<R>): JSX.Element {
     const objectSort = parsed.sort ? parsedSort(prefix, parsed.sort) : {};
     const objectFilter = getFilter(prefix, parsed);
 
-    // cancel request
     fetch({
       page: parseInt((parsed[`${pf}_page`] ?? '1') as string, 10),
       size: parseInt((parsed[`${pf}_size`] ?? '10') as string, 10),
@@ -55,6 +54,40 @@ export function Table<R>(props: TableProps<R>): JSX.Element {
       sort: objectSort,
     })
       .then((result) => {
+        if (!result?.data) {
+          setData({
+            data: [],
+            pagination: {
+              perPage: 10,
+              currentPage: 1,
+              totalItems: 1,
+              totalPages: 1,
+            },
+          });
+          return;
+        }
+        if (result?.data && !Array.isArray(result?.data)) {
+          throw new Error('Loader data must be an array');
+        }
+        if (!result?.pagination) {
+          throw new Error('Loader pagination is required');
+        }
+        const { currentPage, totalPages, perPage, totalItems } = result.pagination;
+
+        if (result.data.length > 0) {
+          if (
+            !Number.isInteger(currentPage) ||
+            !Number.isInteger(totalPages) ||
+            !Number.isInteger(perPage) ||
+            !Number.isInteger(totalItems)
+          ) {
+            throw new Error('Invalid loader pagination');
+          }
+
+          if (totalPages < 1 || currentPage < 1 || perPage < 1 || totalItems < 1) {
+            throw new Error('Invalid loader pagination');
+          }
+        }
         setError(null);
         setData(result);
       })
@@ -88,7 +121,7 @@ export function Table<R>(props: TableProps<R>): JSX.Element {
   // }, []);
 
   if (err !== null) {
-    return Wrapper ? <Wrapper children={<ErrorPage />} /> : <ErrorPage />;
+    return Wrapper ? <Wrapper children={<ErrorPage error={err} />} /> : <ErrorPage error={err} />;
   }
 
   const tmp = (
@@ -124,9 +157,11 @@ export function Table<R>(props: TableProps<R>): JSX.Element {
           </tbody>
         </table>
       </div>
-      <div className="my-8 h-19 sm:h-9 w-full">
-        <PaginationUI data={data} prefix={prefix} />
-      </div>
+      {data && data.pagination && (
+        <div className="my-8 h-19 sm:h-9 w-full">
+          <PaginationUI data={data} prefix={prefix} />
+        </div>
+      )}
     </TableStyle>
   );
 

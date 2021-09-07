@@ -277,12 +277,10 @@ export const PaginationUI: React.FC<PaginationUIProps> = ({ data, prefix }) => {
           !Number.isInteger(perPage) ||
           !Number.isInteger(totalItems)
         ) {
-          console.error('Pagination data must be a positive integer!');
           return [0];
         }
 
         if (totalPages < 1 || currentPage < 1 || perPage < 1 || totalItems < 1) {
-          console.error('Pagination data must be a positive integer!');
           return [0];
         }
       }
@@ -304,7 +302,7 @@ export const PaginationUI: React.FC<PaginationUIProps> = ({ data, prefix }) => {
     [data]
   );
 
-  if (!data || (data.pagination && data.pagination.totalPages && data.pagination.totalPages < 2)) {
+  if (!data || !data.pagination || (data.pagination && data.pagination.totalPages && data.pagination.totalPages < 2)) {
     return null;
   }
 
