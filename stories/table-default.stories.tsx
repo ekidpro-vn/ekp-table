@@ -121,9 +121,9 @@ const defaultLoader: Loader<DefaultDataType, { keyword: string }> = {
   },
 };
 
-const render = (data: DefaultDataType, column: ColumnsProps) => {
-  return <span>{data[column.field] ?? null}</span>;
-};
+// const render = (data: DefaultDataType, column: ColumnsProps) => {
+//   return <span>{data[column.field] ?? null}</span>;
+// };
 
 export const DefaultTable = Template.bind({});
 DefaultTable.args = {
