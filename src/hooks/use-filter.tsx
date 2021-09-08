@@ -55,9 +55,11 @@ function useUpdateFilterOnHooks(prefix = '', filterKey: string) {
         return;
       }
 
-      const key = prefix === '' ? filterKey : `${prefix}_${filterKey}`;
+      const key = [prefix, filterKey].filter((o) => o !== '').join('_');
+      const keyPage = [prefix, 'page'].filter((o) => o !== '').join('_');
+
       parsed[key] = params;
-      prefix ? (parsed[`${prefix}_page`] = '1') : (parsed.page = '1');
+      parsed[keyPage] = '1';
 
       history.push({
         pathname: window.location.pathname,
