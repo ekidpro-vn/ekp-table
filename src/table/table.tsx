@@ -137,12 +137,7 @@ export function Table<R>(props: TableProps<R>): JSX.Element {
         // ref={wrapTableRef}
         className={clsx({
           'relative wrap-table': true,
-          'overflow-x-scroll': !!(
-            data &&
-            data.pagination &&
-            data.pagination.totalPages &&
-            data.pagination.totalPages > 1
-          ),
+          'overflow-x-scroll': !!(data && data.data && data.data.length > 0),
           // 'overflow-x-scroll': !!(data && data.data && data.data.length > 0 && showScrollX),
         })}
       >
@@ -163,7 +158,7 @@ export function Table<R>(props: TableProps<R>): JSX.Element {
           </tbody>
         </table>
       </div>
-      {data && data.pagination && data.pagination.totalPages && data.pagination.totalPages < 2 && (
+      {data && data.pagination && data.pagination.totalPages && data.pagination.totalPages > 1 && (
         <div className="my-8 h-19 sm:h-9 w-full">
           <PaginationUI data={data} prefix={prefix} />
         </div>
