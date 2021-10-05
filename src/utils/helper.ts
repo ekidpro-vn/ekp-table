@@ -1,6 +1,6 @@
-import queryString from 'query-string';
+import { ParsedQuery } from 'query-string';
 
-export const getParsed = (data: queryString.ParsedQuery<string>): Record<string, unknown> => {
+export const getParsed = (data?: ParsedQuery<string> | null): Record<string, unknown> => {
   if (!data) {
     return {};
   }
