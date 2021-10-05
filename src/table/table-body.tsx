@@ -28,13 +28,13 @@ function Body<R>(props: BodyProps<R>): JSX.Element {
       {data.map((item, index) => {
         return (
           <tr
-            key={`cell_${index}_${Math.random()}`}
-            className="bg-white border-gray-200 text-left py-3"
+            key={`row_${index}_${Math.random()}`}
+            className="bg-white border-gray-200 text-left py-3 duration-300 hover:bg-gray-100"
             style={{ borderTopWidth: 1 }}
           >
             {columns.map((item2, index) => {
               return (
-                <td key={`column_${item2.field}_${index}`} className="p-5">
+                <td key={`cell_${item2.field}_${index}`} className="p-5">
                   {render ? render(item, item2) : get(item, `${item2.field}`)}
                 </td>
               );

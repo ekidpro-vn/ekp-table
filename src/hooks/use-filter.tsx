@@ -1,6 +1,7 @@
 import queryString from 'query-string';
 import { useCallback } from 'react';
 import { useHistory, useLocation } from 'react-router-dom';
+import { getParsed } from '../utils/helper';
 
 export function useFilterParams(prefix = ''): Record<string, string[]> {
   const location = useLocation();
@@ -41,7 +42,6 @@ function useUpdateFilterOnHooks(prefix = '', filterKey: string) {
   const setFilter = useCallback(
     (params: string[] | undefined) => {
       const parsed = queryString.parse(search);
-
       // Clear all filter
       if (typeof params === 'undefined') {
         const key = prefix === '' ? filterKey : `${prefix}_${filterKey}`;
@@ -49,7 +49,7 @@ function useUpdateFilterOnHooks(prefix = '', filterKey: string) {
 
         history.push({
           pathname: window.location.pathname,
-          search: queryString.stringify(parsed),
+          search: queryString.stringify(getParsed(parsed)),
         });
 
         return;
@@ -63,7 +63,7 @@ function useUpdateFilterOnHooks(prefix = '', filterKey: string) {
 
       history.push({
         pathname: window.location.pathname,
-        search: queryString.stringify(parsed),
+        search: queryString.stringify(getParsed(parsed)),
       });
     },
     [history, prefix, filterKey, search]
@@ -100,7 +100,7 @@ export const useFilter = (prefix: string): ((params: Record<string, string | und
 
       history.push({
         pathname: window.location.pathname,
-        search: queryString.stringify(parsed),
+        search: queryString.stringify(getParsed(parsed)),
       });
     },
     [history, prefix]
