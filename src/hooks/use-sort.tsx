@@ -1,6 +1,7 @@
 import queryString from 'query-string';
 import { useCallback } from 'react';
 import { useHistory, useLocation } from 'react-router-dom';
+import { getParsed } from '../utils/helper';
 
 export type SortValue = 'asc' | 'desc' | 'none';
 
@@ -42,7 +43,7 @@ const setSort = (newValue: SortValue, prefix: string, field: string, history: an
     parsed.sort = newSort;
     history.replace({
       pathname: location.pathname,
-      search: queryString.stringify(parsed),
+      search: queryString.stringify(getParsed(parsed)),
     });
     return;
   }
@@ -68,7 +69,7 @@ const setSort = (newValue: SortValue, prefix: string, field: string, history: an
 
   history.replace({
     pathname: location.pathname,
-    search: queryString.stringify(parsed),
+    search: queryString.stringify(getParsed(parsed)),
   });
 };
 
@@ -77,12 +78,10 @@ export const useSort = (prefix: string, field: string): [value: SortValue, setVa
   const tmp = getSort(prefix, field, location);
   const history = useHistory();
 
-  const setSortValue = useCallback((newValue: SortValue) => setSort(newValue, prefix, field, history, location), [
-    field,
-    history,
-    prefix,
-    location,
-  ]);
+  const setSortValue = useCallback(
+    (newValue: SortValue) => setSort(newValue, prefix, field, history, location),
+    [field, history, prefix, location]
+  );
 
   return [tmp, setSortValue];
 };
