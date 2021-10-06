@@ -42,14 +42,11 @@ function useUpdateFilterOnHooks(prefix = '', filterKey: string) {
   const setFilter = useCallback(
     (params: string[] | undefined) => {
       const parsed = queryString.parse(search);
-      console.log('ducnh debug 45', parsed);
-      console.log('ducnh debug 46', getParsed(parsed));
       // Clear all filter
       if (typeof params === 'undefined') {
         const key = prefix === '' ? filterKey : `${prefix}_${filterKey}`;
         parsed[key] = undefined;
 
-        console.log('ducnh debug 52', parsed, getParsed(parsed));
         history.push({
           pathname: window.location.pathname,
           search: queryString.stringify(getParsed(parsed)),
@@ -64,7 +61,6 @@ function useUpdateFilterOnHooks(prefix = '', filterKey: string) {
       parsed[key] = params;
       parsed[keyPage] = '1';
 
-      console.log('ducnh debug 67', parsed, getParsed(parsed));
       history.push({
         pathname: window.location.pathname,
         search: queryString.stringify(getParsed(parsed)),
