@@ -42,6 +42,8 @@ function useUpdateFilterOnHooks(prefix = '', filterKey: string) {
   const setFilter = useCallback(
     (params: string[] | undefined) => {
       const parsed = queryString.parse(search);
+      console.log('ducnh debug 45', parsed);
+      console.log('ducnh debug 46', getParsed(parsed));
       // Clear all filter
       if (typeof params === 'undefined') {
         const key = prefix === '' ? filterKey : `${prefix}_${filterKey}`;
