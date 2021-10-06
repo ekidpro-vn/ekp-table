@@ -49,6 +49,7 @@ function useUpdateFilterOnHooks(prefix = '', filterKey: string) {
         const key = prefix === '' ? filterKey : `${prefix}_${filterKey}`;
         parsed[key] = undefined;
 
+        console.log('ducnh debug 52', parsed, getParsed(parsed));
         history.push({
           pathname: window.location.pathname,
           search: queryString.stringify(getParsed(parsed)),
@@ -63,6 +64,7 @@ function useUpdateFilterOnHooks(prefix = '', filterKey: string) {
       parsed[key] = params;
       parsed[keyPage] = '1';
 
+      console.log('ducnh debug 67', parsed, getParsed(parsed));
       history.push({
         pathname: window.location.pathname,
         search: queryString.stringify(getParsed(parsed)),
