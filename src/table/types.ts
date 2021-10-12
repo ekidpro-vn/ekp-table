@@ -49,6 +49,7 @@ export interface ColumnsProps {
   field: string;
   title: string | React.ReactElement | React.FC;
   canSort?: boolean;
+  fixed?: 'left' | 'right';
 }
 
 export interface BodyProps<R> {

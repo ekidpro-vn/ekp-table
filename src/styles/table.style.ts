@@ -18,4 +18,18 @@ export const TableStyle = styled.div`
     -webkit-box-shadow: inset 0 0 3px rgba(0, 0, 0, 0.1);
     background-color: #a5a5a5;
   }
+
+  // body
+  .z-2 {
+    z-index: 2;
+  }
+  .tr-body {
+    &:hover {
+      background-color: #f8f8f8;
+
+      td {
+        background-color: #f8f8f8 !important;
+      }
+    }
+  }
 `;

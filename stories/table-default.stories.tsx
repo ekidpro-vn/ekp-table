@@ -44,7 +44,7 @@ const ColumnsAdminList: ColumnsProps[] = [
   { field: 'email', title: 'EMAIL' },
   { field: 'address', title: 'ADDRESS' },
   { field: 'updated_at', title: 'UPDATED_AT' },
-  { field: 'action', title: 'ACTION' },
+  { field: 'action', title: 'Action', fixed: 'right' },
 ];
 const defaultLoader: Loader<DefaultDataType, { keyword: string }> = {
   fetch: (input) => {
@@ -63,6 +63,7 @@ const defaultLoader: Loader<DefaultDataType, { keyword: string }> = {
           status: 'ACTIVE',
           created_at: '03/02/2021 15:33',
           updated_at: '03/02/2021 15:33',
+          action: 'CREATE',
         },
         {
           id: 2,
@@ -73,6 +74,7 @@ const defaultLoader: Loader<DefaultDataType, { keyword: string }> = {
           status: 'ACTIVE',
           created_at: '03/02/2021 15:33',
           updated_at: '03/02/2021 15:33',
+          action: 'UPDATE',
         },
         {
           id: 3,
@@ -83,6 +85,7 @@ const defaultLoader: Loader<DefaultDataType, { keyword: string }> = {
           status: 'ACTIVE',
           created_at: '03/02/2021 15:33',
           updated_at: '03/02/2021 15:33',
+          action: 'DELETE',
         },
         {
           id: 4,
@@ -93,6 +96,7 @@ const defaultLoader: Loader<DefaultDataType, { keyword: string }> = {
           status: 'ACTIVE',
           created_at: '03/02/2021 15:33',
           updated_at: '03/02/2021 15:33',
+          action: 'VIEW',
         },
         {
           id: 5,

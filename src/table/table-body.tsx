@@ -1,3 +1,4 @@
+import clsx from 'clsx';
 import get from 'lodash.get';
 import React, { memo } from 'react';
 import { NoDataIcon } from '../assets/nodata-icon';
@@ -25,17 +26,23 @@ function Body<R>(props: BodyProps<R>): JSX.Element {
 
   return (
     <>
-      {data.map((item, index) => {
+      {data.map((trItem, index) => {
         return (
           <tr
-            key={`row_${index}_${Math.random()}`}
-            className="bg-white border-gray-200 text-left py-3 duration-300 hover:bg-gray-100"
-            style={{ borderTopWidth: 1 }}
+            key={`tr_${index}_${Math.random()}`}
+            className="bg-white border-gray-200 text-left py-3 tr-body border-t relative"
           >
-            {columns.map((item2, index) => {
+            {columns.map((tdItem, index) => {
               return (
-                <td key={`cell_${item2.field}_${index}`} className="p-5">
-                  {render ? render(item, item2) : get(item, `${item2.field}`)}
+                <td
+                  key={`td_${tdItem.field}_${index}_${Math.random()}`}
+                  className={clsx({
+                    'p-5 z-2': true,
+                    'md:sticky md:left-0 md:top-0 md:bg-white': tdItem.fixed === 'left',
+                    'md:sticky md:right-0 md:top-0 md:bg-white': tdItem.fixed === 'right',
+                  })}
+                >
+                  {render ? render(trItem, tdItem) : get(trItem, `${tdItem.field}`)}
                 </td>
               );
             })}
