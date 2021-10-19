@@ -32,7 +32,7 @@ export function Table<R>(props: TableProps<R>): JSX.Element {
 
   const wrapTableRef = useRef<HTMLDivElement>(null);
   const tableRef = useRef<HTMLTableElement>(null);
-  const [showScrollX, setShowScrollX] = useState<boolean>(false);
+  const [showScrollX, setShowScrollX] = useState<boolean>(true);
 
   const getDataFromRemoteServer = useCallback(() => {
     setLoading(true);
@@ -116,9 +116,9 @@ export function Table<R>(props: TableProps<R>): JSX.Element {
     if (wrapTableRef && wrapTableRef.current && tableRef && tableRef.current) {
       const tableWidth = tableRef.current.clientWidth;
       const wrapTableWidth = wrapTableRef.current.clientWidth;
-      setShowScrollX(tableWidth > wrapTableWidth);
+      setShowScrollX(tableWidth < wrapTableWidth);
     }
-  }, []);
+  }, [wrapTableRef, tableRef]);
 
   if (err !== null) {
     return Wrapper ? <Wrapper children={<ErrorPage error={err} />} /> : <ErrorPage error={err} />;
