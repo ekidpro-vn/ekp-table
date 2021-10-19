@@ -116,7 +116,7 @@ export function Table<R>(props: TableProps<R>): JSX.Element {
     if (wrapTableRef && wrapTableRef.current && tableRef && tableRef.current) {
       const tableWidth = tableRef.current.clientWidth;
       const wrapTableWidth = wrapTableRef.current.clientWidth;
-      setShowScrollX(tableWidth < wrapTableWidth);
+      setShowScrollX(tableWidth > wrapTableWidth);
     }
   }, [wrapTableRef, tableRef]);
 
@@ -138,6 +138,7 @@ export function Table<R>(props: TableProps<R>): JSX.Element {
         className={clsx({
           'relative wrap-table': true,
           'overflow-x-scroll': showScrollX,
+          'overflow-x-hidden': !showScrollX,
         })}
       >
         <table className="w-full table-auto mb-4" ref={tableRef}>
