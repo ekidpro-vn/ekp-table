@@ -30,9 +30,9 @@ export function Table<R>(props: TableProps<R>): JSX.Element {
   const [loading, setLoading] = useState<boolean>(false);
   const location = useLocation();
 
-  // const wrapTableRef = useRef<HTMLDivElement>(null);
-  // const tableRef = useRef<HTMLTableElement>(null);
-  // const [showScrollX, setShowScrollX] = useState<boolean>(false);
+  const wrapTableRef = useRef<HTMLDivElement>(null);
+  const tableRef = useRef<HTMLTableElement>(null);
+  const [showScrollX, setShowScrollX] = useState<boolean>(false);
 
   const getDataFromRemoteServer = useCallback(() => {
     setLoading(true);
@@ -112,13 +112,13 @@ export function Table<R>(props: TableProps<R>): JSX.Element {
     };
   }, [prefix, getDataFromRemoteServer]);
 
-  // useEffect(() => {
-  //   if (wrapTableRef && wrapTableRef.current && tableRef && tableRef.current) {
-  //     const tableWidth = tableRef.current.clientWidth;
-  //     const wrapTableWidth = wrapTableRef.current.clientWidth;
-  //     setShowScrollX(tableWidth > wrapTableWidth);
-  //   }
-  // }, []);
+  useEffect(() => {
+    if (wrapTableRef && wrapTableRef.current && tableRef && tableRef.current) {
+      const tableWidth = tableRef.current.clientWidth;
+      const wrapTableWidth = wrapTableRef.current.clientWidth;
+      setShowScrollX(tableWidth > wrapTableWidth);
+    }
+  }, []);
 
   if (err !== null) {
     return Wrapper ? <Wrapper children={<ErrorPage error={err} />} /> : <ErrorPage error={err} />;
@@ -134,13 +134,13 @@ export function Table<R>(props: TableProps<R>): JSX.Element {
     >
       {((data === null && err === null) || loading) && <TableLoading />}
       <div
-        // ref={wrapTableRef}
-        className="relative wrap-table overflow-x-scroll"
+        ref={wrapTableRef}
+        className={clsx({
+          'relative wrap-table': true,
+          'overflow-x-scroll': showScrollX,
+        })}
       >
-        <table
-          className="w-full table-auto mb-4"
-          // ref={tableRef}
-        >
+        <table className="w-full table-auto mb-4" ref={tableRef}>
           <thead>
             <TableHeader columns={columns} prefix={prefix} />
           </thead>
