@@ -15,10 +15,8 @@ import { TableLoading } from './table-loading';
 import { FilterProps, Pagination, TableProps } from './types';
 
 export const Filter: React.FC<FilterProps> = (props) => {
-  const { ListFilterComponent, colClassName, gridClassName } = props;
-  return (
-    <FilterTable ListFilterComponent={ListFilterComponent} colClassName={colClassName} gridClassName={gridClassName} />
-  );
+  const { FilterComponents, colClassName, gridClassName } = props;
+  return <FilterTable FilterComponents={FilterComponents} colClassName={colClassName} gridClassName={gridClassName} />;
 };
 
 export function Table<R>(props: TableProps<R>): JSX.Element {

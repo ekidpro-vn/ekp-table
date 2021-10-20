@@ -26,16 +26,16 @@ function Body<R>(props: BodyProps<R>): JSX.Element {
 
   return (
     <>
-      {data.map((trItem) => {
+      {data.map((trItem, index) => {
         return (
           <tr
-            key={`tr_${Math.random()}`}
+            key={`tr_${index}`}
             className="bg-white border-gray-200 text-left py-3 border-t relative group hover:bg-gray-100"
           >
             {columns.map((tdItem) => {
               return (
                 <td
-                  key={`td_${tdItem.field}_${Math.random()}`}
+                  key={`td_${tdItem.field}}`}
                   className={clsx({
                     'p-5 z-2 group-hover:bg-gray-100': true,
                     'md:sticky md:left-0 md:top-0 md:bg-white': tdItem.fixed === 'left',
