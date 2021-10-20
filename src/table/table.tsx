@@ -30,10 +30,6 @@ export function Table<R>(props: TableProps<R>): JSX.Element {
   const [loading, setLoading] = useState<boolean>(false);
   const location = useLocation();
 
-  const wrapTableRef = useRef<HTMLDivElement>(null);
-  const tableRef = useRef<HTMLTableElement>(null);
-  const [showScrollX, setShowScrollX] = useState<boolean>(true);
-
   const getDataFromRemoteServer = useCallback(() => {
     setLoading(true);
     const { fetch } = loader.current;
@@ -112,14 +108,6 @@ export function Table<R>(props: TableProps<R>): JSX.Element {
     };
   }, [prefix, getDataFromRemoteServer]);
 
-  useEffect(() => {
-    if (wrapTableRef && wrapTableRef.current && tableRef && tableRef.current) {
-      const tableWidth = tableRef.current.clientWidth;
-      const wrapTableWidth = wrapTableRef.current.clientWidth;
-      setShowScrollX(tableWidth > wrapTableWidth);
-    }
-  }, [wrapTableRef, tableRef]);
-
   if (err !== null) {
     return Wrapper ? <Wrapper children={<ErrorPage error={err} />} /> : <ErrorPage error={err} />;
   }
@@ -133,8 +121,8 @@ export function Table<R>(props: TableProps<R>): JSX.Element {
       data-testid="table"
     >
       {((data === null && err === null) || loading) && <TableLoading />}
-      <div ref={wrapTableRef} className="relative wrap-table overflow-x-auto">
-        <table className="w-full table-auto mb-4" ref={tableRef}>
+      <div className="relative wrap-table overflow-x-auto">
+        <table className="w-full table-auto mb-4">
           <thead>
             <TableHeader columns={columns} prefix={prefix} />
           </thead>
