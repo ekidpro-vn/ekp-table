@@ -1,3 +1,5 @@
+import React from 'react';
+
 export type ResultType = Record<string, any>;
 
 export interface SortIconProps {
@@ -5,10 +7,12 @@ export interface SortIconProps {
   field: string;
 }
 
+type FilterComponent = React.ReactElement | React.FC | JSX.Element;
+
 export interface FilterProps {
   gridClassName?: string;
   colClassName?: string;
-  ListFilterComponent: { FilterComponent: React.ReactElement | React.FC }[];
+  FilterComponents: FilterComponent[];
 }
 
 export interface HeaderProps {
@@ -49,6 +53,7 @@ export interface ColumnsProps {
   field: string;
   title: string | React.ReactElement | React.FC;
   canSort?: boolean;
+  fixed?: 'left' | 'right';
 }
 
 export interface BodyProps<R> {

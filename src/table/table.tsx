@@ -15,10 +15,8 @@ import { TableLoading } from './table-loading';
 import { FilterProps, Pagination, TableProps } from './types';
 
 export const Filter: React.FC<FilterProps> = (props) => {
-  const { ListFilterComponent, colClassName, gridClassName } = props;
-  return (
-    <FilterTable ListFilterComponent={ListFilterComponent} colClassName={colClassName} gridClassName={gridClassName} />
-  );
+  const { FilterComponents, colClassName, gridClassName } = props;
+  return <FilterTable FilterComponents={FilterComponents} colClassName={colClassName} gridClassName={gridClassName} />;
 };
 
 export function Table<R>(props: TableProps<R>): JSX.Element {
@@ -29,10 +27,6 @@ export function Table<R>(props: TableProps<R>): JSX.Element {
   const [err, setError] = useState<Error | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
   const location = useLocation();
-
-  // const wrapTableRef = useRef<HTMLDivElement>(null);
-  // const tableRef = useRef<HTMLTableElement>(null);
-  // const [showScrollX, setShowScrollX] = useState<boolean>(false);
 
   const getDataFromRemoteServer = useCallback(() => {
     setLoading(true);
@@ -112,14 +106,6 @@ export function Table<R>(props: TableProps<R>): JSX.Element {
     };
   }, [prefix, getDataFromRemoteServer]);
 
-  // useEffect(() => {
-  //   if (wrapTableRef && wrapTableRef.current && tableRef && tableRef.current) {
-  //     const tableWidth = tableRef.current.clientWidth;
-  //     const wrapTableWidth = wrapTableRef.current.clientWidth;
-  //     setShowScrollX(tableWidth > wrapTableWidth);
-  //   }
-  // }, []);
-
   if (err !== null) {
     return Wrapper ? <Wrapper children={<ErrorPage error={err} />} /> : <ErrorPage error={err} />;
   }
@@ -133,14 +119,8 @@ export function Table<R>(props: TableProps<R>): JSX.Element {
       data-testid="table"
     >
       {((data === null && err === null) || loading) && <TableLoading />}
-      <div
-        // ref={wrapTableRef}
-        className="relative wrap-table overflow-x-scroll"
-      >
-        <table
-          className="w-full table-auto mb-4"
-          // ref={tableRef}
-        >
+      <div className="relative wrap-table overflow-x-auto">
+        <table className="w-full table-auto mb-4">
           <thead>
             <TableHeader columns={columns} prefix={prefix} />
           </thead>

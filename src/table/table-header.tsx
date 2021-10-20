@@ -73,7 +73,9 @@ const ThHeader: React.FC<{ prefix: string; item: ColumnsProps }> = memo((props) 
     <th
       className={clsx({
         'cursor-pointer duration-300 hover:text-blue-500': item.canSort,
-        'bg-gray-50 p-5': true,
+        'bg-gray-50 p-5 z-2': true,
+        'md:sticky md:left-0 md:top-0': item.fixed === 'left',
+        'md:sticky md:right-0 md:top-0': item.fixed === 'right',
       })}
       key={`title_${item.title}`}
       onClick={item.canSort ? onFilterSort : undefined}
@@ -91,7 +93,7 @@ export const TableHeader: React.FC<HeaderProps> = memo((props) => {
   const prefix = props.prefix ?? 'default';
 
   return (
-    <tr className="bg-gray-800 text-left rounded">
+    <tr className="bg-gray-800 text-left rounded relative">
       {columns && columns.map((item) => <ThHeader key={item.field} item={item} prefix={prefix} />)}
     </tr>
   );

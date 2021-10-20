@@ -133,10 +133,10 @@ const PageSizeDropdown: React.FC<PageSizeDropdownProps> = (props) => {
   useOutsideElement(pageSizeDropdownRef);
 
   return (
-    <div className="flex items-center sm:ml-3 justify-center mb-5 sm:mb-0">
+    <div className="flex items-center lg:ml-3 justify-center mb-5 lg:mb-0">
       <div
         className={clsx({
-          'ekp-pagination-dropdown relative cursor-pointer rounded inline-flex sm:flex items-center px-4 h-9 hover:bg-blue-500 duration-300':
+          'ekp-pagination-dropdown relative cursor-pointer rounded inline-flex lg:flex items-center px-4 h-9 hover:bg-blue-500 duration-300':
             true,
           'bg-blue-500': showSelectPageSize,
           'bg-gray-200': !showSelectPageSize,
@@ -311,12 +311,12 @@ export const PaginationUI: React.FC<PaginationUIProps> = ({ data, prefix }) => {
 
   return (
     <PaginationStyle>
-      <div className="w-full h-full sm:flex sm:justify-between" data-testid="pagination">
-        <div className="perpage-dropdown w-full sm:w-auto">
+      <div className="w-full h-full lg:flex lg:justify-between" data-testid="pagination">
+        <div className="perpage-dropdown w-full lg:w-auto">
           <PageSizeDropdown pagination={pagination} dataPageSize={dataPageSize} onSelectSize={onSelectSize} />
         </div>
-        <div className="page-number w-full sm:w-auto sm:flex justify-center">
-          <div className="flex justify-center items-center mb-5 sm:mb-0">
+        <div className="page-number w-full lg:w-auto lg:flex justify-center">
+          <div className="flex justify-center items-center mb-5 lg:mb-0">
             <PageNumber
               page={1}
               special="first"

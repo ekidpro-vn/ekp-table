@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import { LoadingIcon } from '../assets/loading';
 
 const LoadingStyle = styled.div`
-  z-index: 1;
+  z-index: 5;
 `;
 
 export const TableLoading: React.FC = memo(() => {

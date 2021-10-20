@@ -1,6 +1,7 @@
 import styled from 'styled-components';
 
 export const TableStyle = styled.div`
+  // scroll bar
   .wrap-table::-webkit-scrollbar-track {
     -webkit-box-shadow: inset 0 0 3px rgba(0, 0, 0, 0.1);
     border-radius: 15px;
@@ -17,5 +18,10 @@ export const TableStyle = styled.div`
     border-radius: 15px;
     -webkit-box-shadow: inset 0 0 3px rgba(0, 0, 0, 0.1);
     background-color: #a5a5a5;
+  }
+
+  // body
+  .z-2 {
+    z-index: 2;
   }
 `;
