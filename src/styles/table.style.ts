@@ -1,6 +1,7 @@
 import styled from 'styled-components';
 
 export const TableStyle = styled.div`
+  // scroll bar
   .wrap-table::-webkit-scrollbar-track {
     -webkit-box-shadow: inset 0 0 3px rgba(0, 0, 0, 0.1);
     border-radius: 15px;
@@ -22,14 +23,5 @@ export const TableStyle = styled.div`
   // body
   .z-2 {
     z-index: 2;
-  }
-  .tr-body {
-    &:hover {
-      background-color: #f8f8f8;
-
-      td {
-        background-color: #f8f8f8 !important;
-      }
-    }
   }
 `;

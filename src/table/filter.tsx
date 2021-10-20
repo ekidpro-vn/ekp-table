@@ -47,9 +47,9 @@ export const FilterTable: React.FC<FilterProps> = (props) => {
               'expand-filter-mobile': showFilterMobile === 'show',
             })}
           >
-            {ListFilterComponent.map((item, index) => {
+            {ListFilterComponent.map((item) => {
               return (
-                <div className="col-span-4 sm:col-span-2 lg:col-span-1 mt-2 sm:mt-0" key={`filter_mb_${index}`}>
+                <div className="col-span-4 sm:col-span-2 lg:col-span-1 mt-2 sm:mt-0" key={`filter_mb_${Math.random()}`}>
                   {item.FilterComponent}
                 </div>
               );
@@ -60,11 +60,11 @@ export const FilterTable: React.FC<FilterProps> = (props) => {
       {/* End mobile */}
 
       <div className={gridClassName ?? 'grid-cols-4 gap-x-8 gap-y-4 mb-10 hidden sm:grid'} data-testid="filter">
-        {ListFilterComponent.map((item, index) => {
+        {ListFilterComponent.map((item) => {
           return (
             <div
               className={colClassName ?? 'col-span-4 sm:col-span-2 lg:col-span-1 mt-2 sm:mt-0'}
-              key={`filter_${index}`}
+              key={`filter_${Math.random()}`}
             >
               {item.FilterComponent}
             </div>
