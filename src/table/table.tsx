@@ -133,14 +133,7 @@ export function Table<R>(props: TableProps<R>): JSX.Element {
       data-testid="table"
     >
       {((data === null && err === null) || loading) && <TableLoading />}
-      <div
-        ref={wrapTableRef}
-        className={clsx({
-          'relative wrap-table': true,
-          'overflow-x-scroll': showScrollX,
-          'overflow-x-hidden': !showScrollX,
-        })}
-      >
+      <div ref={wrapTableRef} className="relative wrap-table overflow-x-auto">
         <table className="w-full table-auto mb-4" ref={tableRef}>
           <thead>
             <TableHeader columns={columns} prefix={prefix} />
