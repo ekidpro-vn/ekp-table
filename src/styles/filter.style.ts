@@ -1,15 +1,5 @@
 import styled, { keyframes } from 'styled-components';
 
-const rotateFilterExpand = keyframes`
-  0% {transform: rotate(0);}
-  100% {transform: rotate(90deg);}
-`;
-
-const rotateFilterShrink = keyframes`
-  0% {transform: rotate(90deg);}
-  100% {transform: rotate(0);}
-`;
-
 const overflowVisibleFilter = keyframes`
   0% {overflow: hidden;}
   100%{overflow: visible;}
@@ -34,13 +24,6 @@ export const FilterStyle = styled.div`
   .shrink-filter-mobile div {
     opacity: 0;
     transition: 0.3s;
-  }
-  .accordion-filter-mobile-icon-expand {
-    animation: ${rotateFilterExpand} 0.3s forwards;
-  }
-
-  .accordion-filter-mobile-icon-shrink {
-    animation: ${rotateFilterShrink} 0.3s forwards;
   }
 
   .overflow-visible-filter {
