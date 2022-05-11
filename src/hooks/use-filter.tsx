@@ -87,13 +87,12 @@ export const useTableFilter = (
   return [current, setValue];
 };
 
-export const useFilter = (prefix: string): ((params: Record<string, string | undefined>) => void) => {
+export const useFilter = (prefix: string): ((params: Record<string, string | string[] | undefined>) => void) => {
   const history = useHistory();
 
   return useCallback(
     (params: Record<string, string | undefined>) => {
       const parsed = queryString.parse(window.location.search);
-
       for (const [key, value] of Object.entries(params)) {
         parsed[`${prefix}_${key}`] = value || null;
       }

@@ -5,10 +5,10 @@ import { FilterProps } from './types';
 
 export const FilterTable: React.FC<FilterProps> = (props) => {
   const { FilterComponents, gridClassName, colClassName } = props;
-  const [showFilterMobile, setShowFilterMobile] = useState<'load' | 'show' | 'hidden'>('load');
+  const [showFilterMobile, setShowFilterMobile] = useState<'show' | 'hidden'>('hidden');
 
   const onToggleFilter = useCallback(() => {
-    if (showFilterMobile === 'load' || showFilterMobile === 'hidden') {
+    if (showFilterMobile === 'hidden') {
       setShowFilterMobile('show');
     }
     if (showFilterMobile === 'show') {
@@ -31,19 +31,33 @@ export const FilterTable: React.FC<FilterProps> = (props) => {
             className={`flex items-center justify-between w-full py-3 px-4 rounded bg-blue-50 mb-3`}
             onClick={onToggleFilter}
           >
-            <span>Filter</span>
-            <i
-              className={clsx({
-                'duration-300 fas text-xl fa-caret-right': true,
-                'accordion-filter-mobile-icon-shrink': showFilterMobile === 'hidden',
-                'accordion-filter-mobile-icon-expand': showFilterMobile === 'show',
-              })}
-            ></i>
+            <span className="font-medium">Filter</span>
+            {showFilterMobile === 'hidden' && (
+              <span className="duration-300">
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                  <path
+                    fillRule="evenodd"
+                    d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
+                    clipRule="evenodd"
+                  />
+                </svg>
+              </span>
+            )}
+            {showFilterMobile === 'show' && (
+              <span className="duration-300">
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                  <path
+                    fillRule="evenodd"
+                    d="M14.707 12.707a1 1 0 01-1.414 0L10 9.414l-3.293 3.293a1 1 0 01-1.414-1.414l4-4a1 1 0 011.414 0l4 4a1 1 0 010 1.414z"
+                    clipRule="evenodd"
+                  />
+                </svg>
+              </span>
+            )}
           </div>
           <div
             className={clsx({
-              'duration-1000 max-h-0 overflow-hidden': showFilterMobile === 'load',
-              'shrink-filter-mobile': showFilterMobile === 'hidden',
+              'duration-1000 max-h-0 overflow-hidden shrink-filter-mobile': showFilterMobile === 'hidden',
               'expand-filter-mobile': showFilterMobile === 'show',
             })}
           >
